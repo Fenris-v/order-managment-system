@@ -25,6 +25,12 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:4.0.6")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.2")
 
+    implementation("org.springframework.boot:spring-boot-starter-security:3.1.2")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+//    implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+//    implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    implementation("de.mkammerer:argon2-jvm:2.11")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")

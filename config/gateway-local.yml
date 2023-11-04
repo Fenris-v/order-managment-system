@@ -1,0 +1,39 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+
+      routes:
+        - id: order_swagger
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/v3/**
+
+        - id: order
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/**
+          filters:
+            - StripPrefix=3
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
+
+
+app:
+  auth:
+    # todo
+    secret: ${JWT_SECRET:QkQ4NDU0N0U5Q0E4QTM0NzdCOTU3OTVEREQ4NTU=}
