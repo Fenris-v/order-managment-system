@@ -18,6 +18,19 @@ spring:
         enabled: true
         service-id: discovery
 
+  datasource:
+    url: jdbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
+    username: ${DP_EMPLOYER_DB_USER:user}
+    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
 eureka:
   client:
     serviceUrl:

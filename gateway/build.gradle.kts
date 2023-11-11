@@ -32,6 +32,9 @@ dependencies {
     implementation("de.mkammerer:argon2-jvm:2.11")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
+    // todo
+    implementation("org.postgresql:postgresql:42.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     implementation("io.projectreactor:reactor-test:3.5.8")

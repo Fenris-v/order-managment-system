@@ -1,6 +1,28 @@
 version: '3.8'
 
 services:
+  pgsql:
+    image: 'postgres:15'
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: '${DB_USERNAME:-user}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE:-db}'
+    volumes:
+      - 'db:/var/lib/postgresql/data'
+    networks:
+      - oms
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-db}", "-U", "${DB_USERNAME:-user}" ]
+      retries: 3
+      timeout: 5s
+    container_name: pgsql_db
+
   mongo_auth:
     image: mongo:6.0.11
     container_name: mongo_auth
@@ -71,6 +93,8 @@ networks:
     driver: bridge
 
 volumes:
+  db:
+    driver: local
   auth:
     driver: local
   order:
