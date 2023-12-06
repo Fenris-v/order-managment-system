@@ -12,7 +12,6 @@ import java.util.function.Function
 import javax.crypto.SecretKey
 
 @Component
-// todo
 class JwtUtil(@Value("\${app.auth.secret}") private val secret: String) {
     fun extractUsername(token: String): String {
         return extractClaim(token, Claims::getSubject)
@@ -23,7 +22,7 @@ class JwtUtil(@Value("\${app.auth.secret}") private val secret: String) {
         return claimsResolver.apply(claims)
     }
 
-    private fun extractAllClaims(token: String): Claims {
+    fun extractAllClaims(token: String): Claims {
         return Jwts
             .parser()
             .verifyWith(getSignInKey())

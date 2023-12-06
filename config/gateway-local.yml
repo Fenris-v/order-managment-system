@@ -1,4 +1,13 @@
 spring:
+  boot:
+    admin:
+      client:
+        url: ${DP_SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${DP_ADMIN_PORT:8999}
+        instance:
+          service-url: ${DP_SERVICE_PROTOCOL:http://}${GATEWAY_DOMAIN:localhost}:${GATEWAY_PORT:8080}
+          health-url: ${DP_SERVICE_PROTOCOL:http://}${GATEWAY_DOMAIN:localhost}:${GATEWAY_PORT:8080}/actuator/health
+          management-url: ${DP_SERVICE_PROTOCOL:http://}${GATEWAY_DOMAIN:localhost}:${GATEWAY_PORT:8080}/actuator
+
   cloud:
     gateway:
       default-filters:
@@ -32,8 +41,16 @@ eureka:
     serviceUrl:
       defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
 
-
 app:
   auth:
-    # todo
-    secret: ${JWT_SECRET:QkQ4NDU0N0U5Q0E4QTM0NzdCOTU3OTVEREQ4NTU=}
+    secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'

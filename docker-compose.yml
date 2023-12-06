@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   pgsql:
-    image: 'postgres:15'
+    image: postgres:latest
     deploy:
       resources:
         limits:
@@ -12,81 +12,81 @@ services:
     environment:
       POSTGRES_USER: '${DB_USERNAME:-user}'
       POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-      POSTGRES_DB: '${DB_DATABASE:-db}'
+      POSTGRES_DB: '${DB_DATABASE:-order_management_db}'
     volumes:
       - 'db:/var/lib/postgresql/data'
     networks:
       - oms
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-db}", "-U", "${DB_USERNAME:-user}" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-order_management_db}", "-U", "${DB_USERNAME:-user}" ]
       retries: 3
       timeout: 5s
     container_name: pgsql_db
 
-  mongo_auth:
-    image: mongo:6.0.11
-    container_name: mongo_auth
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - auth:/data/db
-    ports:
-      - "27017:27017"
-    networks:
-      - oms
+#  mongo_auth:
+#    image: mongo:6.0.11
+#    container_name: mongo_auth
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    volumes:
+#      - auth:/data/db
+#    ports:
+#      - "27017:27017"
+#    networks:
+#      - oms
 
-  mongo_order:
-    image: mongo:6.0.11
-    container_name: mongo_order
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - order:/data/db
-    ports:
-      - "27018:27017"
-    networks:
-      - oms
-
-  mongo_payment:
-    image: mongo:6.0.11
-    container_name: mongo_payment
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - payment:/data/db
-    ports:
-      - "27019:27017"
-    networks:
-      - oms
-
-  mongo_inventory:
-    image: mongo:6.0.11
-    container_name: mongo_inventory
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - inventory:/data/db
-    ports:
-      - "27010:27017"
-    networks:
-      - oms
-
-  mongo_delivery:
-    image: mongo:6.0.11
-    container_name: mongo_delivery
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - delivery:/data/db
-    ports:
-      - "27011:27017"
-    networks:
-      - oms
+#  mongo_order:
+#    image: mongo:6.0.11
+#    container_name: mongo_order
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    volumes:
+#      - order:/data/db
+#    ports:
+#      - "27018:27017"
+#    networks:
+#      - oms
+#
+#  mongo_payment:
+#    image: mongo:6.0.11
+#    container_name: mongo_payment
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    volumes:
+#      - payment:/data/db
+#    ports:
+#      - "27019:27017"
+#    networks:
+#      - oms
+#
+#  mongo_inventory:
+#    image: mongo:6.0.11
+#    container_name: mongo_inventory
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    volumes:
+#      - inventory:/data/db
+#    ports:
+#      - "27010:27017"
+#    networks:
+#      - oms
+#
+#  mongo_delivery:
+#    image: mongo:6.0.11
+#    container_name: mongo_delivery
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#    volumes:
+#      - delivery:/data/db
+#    ports:
+#      - "27011:27017"
+#    networks:
+#      - oms
 
 networks:
   oms:
@@ -95,13 +95,13 @@ networks:
 volumes:
   db:
     driver: local
-  auth:
-    driver: local
-  order:
-    driver: local
-  payment:
-    driver: local
-  inventory:
-    driver: local
-  delivery:
-    driver: local
+#  auth:
+#    driver: local
+#  order:
+#    driver: local
+#  payment:
+#    driver: local
+#  inventory:
+#    driver: local
+#  delivery:
+#    driver: local

@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.2")
     implementation("de.codecentric:spring-boot-admin-starter-server:3.1.3")
-    
+
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
 }

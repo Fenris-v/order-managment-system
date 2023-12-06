@@ -27,14 +27,21 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-security:3.1.2")
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
-//    implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
-//    implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
-    implementation("de.mkammerer:argon2-jvm:2.11")
+    implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
     // todo
     implementation("org.postgresql:postgresql:42.6.0")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.2")
+    implementation("org.postgresql:r2dbc-postgresql:1.0.2.RELEASE")
+    implementation("org.springframework.data:spring-data-r2dbc:3.1.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.1.5")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.1.5")
+
+    implementation("org.springframework.boot:spring-boot-starter-jdbc:3.1.5")
+    implementation("org.liquibase:liquibase-core:4.23.0")
+
+    implementation("de.codecentric:spring-boot-admin-client:3.1.3")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     implementation("io.projectreactor:reactor-test:3.5.8")
