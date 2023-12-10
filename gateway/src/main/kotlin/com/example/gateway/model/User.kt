@@ -6,10 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.relational.core.mapping.Table
@@ -18,14 +14,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
-@Entity
 @Table(name = "users")
 class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     val id: Long? = null,
-    private var email: String? = "",
+    var email: String = "",
 
     @JsonIgnore
     private var password: String = "",
@@ -61,7 +54,7 @@ class User(
         return password
     }
 
-    override fun getUsername(): String? {
+    override fun getUsername(): String {
         return email
     }
 

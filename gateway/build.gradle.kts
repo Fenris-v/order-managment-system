@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.22"
 }
 
-group = "com.example"
+group = "com.example.gateway"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -41,7 +41,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.1.5")
     implementation("org.liquibase:liquibase-core:4.23.0")
 
-    implementation("de.codecentric:spring-boot-admin-client:3.1.3")
+    implementation("de.codecentric:spring-boot-admin-client:3.1.5")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
     implementation("io.projectreactor:reactor-test:3.5.8")

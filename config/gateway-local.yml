@@ -43,7 +43,14 @@ eureka:
 
 app:
   auth:
-    secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+    jwt:
+      secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+      #      expiration: 60000
+      expiration: 60000000
+    refresh:
+      secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+      #      expiration: 120000
+      expiration: 120000000
 
 management:
   endpoint:

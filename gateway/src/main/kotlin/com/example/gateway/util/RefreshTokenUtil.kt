@@ -10,9 +10,9 @@ import java.util.Date
 import javax.crypto.SecretKey
 
 @Component
-class JwtUtil(
-    @Value("\${app.auth.jwt.secret}") private val secret: String,
-    @Value("\${app.auth.jwt.expiration}") private val expiration: Int
+class RefreshTokenUtil(
+    @Value("\${app.auth.refresh.secret}") private val secret: String,
+    @Value("\${app.auth.refresh.expiration}") private val expiration: Int
 ) : AbstractTokenUtil(), TokenUtil {
     override fun generateToken(claims: Map<String, Any>, username: String?): Mono<String> {
         return getSignInKey()

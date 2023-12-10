@@ -3,6 +3,7 @@ package com.example.gateway.controller
 import com.example.gateway.dto.response.ExceptionDto
 import com.example.gateway.dto.response.ValidatorResponse
 import com.example.gateway.exception.EntityNotFoundException
+import io.jsonwebtoken.ExpiredJwtException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
@@ -14,6 +15,11 @@ import org.springframework.web.server.ServerWebInputException
 
 @ControllerAdvice
 class CustomExceptionHandler {
+    @ExceptionHandler(ExpiredJwtException::class)
+    fun handleExpiredJwtException(): ResponseEntity<Any> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    }
+
     @ExceptionHandler(ServerWebInputException::class)
     fun handleServerWebInputException(): ResponseEntity<ExceptionDto> {
         val status = HttpStatus.BAD_REQUEST

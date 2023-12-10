@@ -2,74 +2,69 @@ package com.example.gateway.config.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.Customizer
-import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint
+import org.springframework.security.web.server.context.ServerSecurityContextRepository
 
 @Configuration
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity
 class SecurityConfig {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return Argon2PasswordEncoder(16, 32, 1, 4096, 3)
     }
 
-//    @Bean
-//    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
-//        return config.authenticationManager
-////        return httpSecurity.getSharedObject(AuthenticationManagerBuilder::class.java)
-////            .authenticationProvider(authenticationProvider)
-////            .build()
-//    }
-
-//    @Bean
-//    fun authenticationManager(): ReactiveAuthenticationManager {
-//        return CustomAuthenticationManager()
-//    }
-//
-//    @Bean
-//    fun securityContextRepository(): ServerSecurityContextRepository {
-//        return CustomSecurityContextRepository()
-//    }
-
     @Bean
     fun filterChain(
         http: ServerHttpSecurity,
-        authenticationManager: CustomAuthenticationManager,
-        securityContextRepository: CustomSecurityContextRepository
+        jwtAuthenticationManager: JwtAuthenticationManager,
+        jwtSecurityContextRepository: ServerSecurityContextRepository,
+        jwtAuthenticationFilter: JwtAuthenticationFilter
     ): SecurityWebFilterChain {
         http
             .csrf { csrf -> csrf.disable() } // todo: включить потом цсрф
             .cors(Customizer.withDefaults())
-//            .cors { it.disable() }
-//            .httpBasic(Customizer.withDefaults())
-            .httpBasic { it.disable() }
+            .httpBasic { it.authenticationEntryPoint(HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)) }
             .formLogin { it.disable() }
-            .authenticationManager(authenticationManager)
-            .securityContextRepository(securityContextRepository)
-//            .formLogin { http -> http.loginPage() }
-//            .authorizeHttpRequests { auth -> auth.anyRequest().permitAll() }
+            .logout { it.disable() }
+
+
+//            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+//            .addFilterBefore(jwtAuthenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
+//            .exceptionHandling {
+//                it.authenticationEntryPoint()
+//            }
+
+//            .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+            .authenticationManager(jwtAuthenticationManager)
+            .securityContextRepository(jwtSecurityContextRepository)
+
+
+            .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+
+
+//            .exceptionHandling {
+//                it.authenticationEntryPoint { exchange: ServerWebExchange, ex: AuthenticationException? ->
+//                    Mono.fromRunnable { exchange.response.setStatusCode(HttpStatus.UNAUTHORIZED) }
+//                }
+//
+//                it.accessDeniedHandler { exchange: ServerWebExchange, ex: AccessDeniedException? ->
+//                    Mono.fromRunnable { exchange.response.setStatusCode(HttpStatus.FORBIDDEN) }
+//                }
+//            }
             .authorizeExchange {
                 it
                     .pathMatchers("/api/v1/user/register", "/api/v1/user/login", "/actuator/**")
                     .permitAll()
-                    .anyExchange()
-                    .authenticated()
             }
-//            .anonymous(Customizer.withDefaults())
-//            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-
-//        httpSecurity.oauth2Login { oauth -> oauth.loginPage("/login").successHandler(null) }
-
-//        http.sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-
-//        httpSecurity.authenticationProvider(authenticationProvider)
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .authorizeExchange { it.anyExchange().authenticated() }
 
         return http.build()
     }
