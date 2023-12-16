@@ -15,8 +15,14 @@ class JwtAuthenticationManager(private val jwtUtil: JwtUtil) : ReactiveAuthentic
         val role: List<String> = listOf("USER")
         val authorities: List<SimpleGrantedAuthority> = role.stream().map { SimpleGrantedAuthority(it) }.toList()
 
-        return jwtUtil.extractUsername(jwt)
-            .flatMap { Mono.just<Authentication>(UsernamePasswordAuthenticationToken(it, null, authorities)) }
+        return jwtUtil
+            .extractUsername(jwt)
+            .flatMap {
+                Mono.just<Authentication>(UsernamePasswordAuthenticationToken(it, null, authorities))
+            }
+//            .onErrorResume {
+//                Mono.empty()
+//            }
     }
 }
 //        if (userName != null) {

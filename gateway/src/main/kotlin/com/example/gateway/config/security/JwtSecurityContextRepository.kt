@@ -12,9 +12,6 @@ import reactor.core.publisher.Mono
 @Component
 class JwtSecurityContextRepository(private val jwtAuthenticationManager: JwtAuthenticationManager) :
         ServerSecurityContextRepository {
-//    @Autowired
-//    private lateinit var authenticationManager: ReactiveAuthenticationManager
-
     override fun save(exchange: ServerWebExchange?, context: SecurityContext?): Mono<Void> {
         return Mono.empty()
     }
@@ -29,7 +26,18 @@ class JwtSecurityContextRepository(private val jwtAuthenticationManager: JwtAuth
             val jwt: String = authHeader.substring(7)
             val auth = UsernamePasswordAuthenticationToken(jwt, jwt)
 
-            return jwtAuthenticationManager.authenticate(auth).map { SecurityContextImpl(it) }
+            return jwtAuthenticationManager
+                .authenticate(auth)
+                .onErrorResume {
+//                    exchange.response.setStatusCode(HttpStatus.UNAUTHORIZED)
+//                    val errorMessage = it?.message ?: "Unauthorized"
+                    throw AuthenticationException2(it?.message ?: "Unauthorized", it)
+//                    val dataBuffer = exchange.response.bufferFactory().wrap(errorMessage.toByteArray())
+//                    exchange.response.writeWith(Mono.just(dataBuffer))
+                }
+                .map {
+                    SecurityContextImpl(it)
+                }
         }
 
         return Mono.empty()
