@@ -16,17 +16,16 @@ abstract class AbstractTokenUtil : TokenUtil {
         return generateToken(claims, userDetails.username)
     }
 
+    fun isValidToken(token: String): Boolean {
+        return extractExpiration(token).after(Date())
+    }
+
     fun extractUsername(token: String): String {
         return extractClaim(token, Claims::getSubject)
     }
 
     fun extractExpiration(token: String): Date {
         return extractClaim(token, Claims::getExpiration)
-    }
-
-    private fun <T> extractClaim(token: String, claimsResolver: Function<Claims, T>): T {
-        val claims: Claims = extractAllClaims(token)
-        return claimsResolver.apply(claims)
     }
 
     fun extractAllClaims(token: String): Claims {
@@ -38,7 +37,8 @@ abstract class AbstractTokenUtil : TokenUtil {
             .payload
     }
 
-    fun isValidToken(token: String): Boolean {
-        return extractExpiration(token).after(Date())
+    private fun <T> extractClaim(token: String, claimsResolver: Function<Claims, T>): T {
+        val claims: Claims = extractAllClaims(token)
+        return claimsResolver.apply(claims)
     }
 }

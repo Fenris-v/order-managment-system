@@ -7,8 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -17,14 +15,11 @@ import java.util.UUID
 
 @Entity
 @Table(name = "user_roles")
-class UserRole(
+data class UserRole(
     @Id
     val id: UUID? = null,
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    val user: User? = null,
-
+    val userId: Long? = null,
     val role: UserRoleType? = null,
 
     @CreationTimestamp

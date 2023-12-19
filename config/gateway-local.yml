@@ -1,4 +1,7 @@
 spring:
+  cache:
+    type: caffeine
+
   boot:
     admin:
       client:
@@ -36,6 +39,19 @@ spring:
           filters:
             - StripPrefix=3
 
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/db.changelog-master.xml
+    url: jdbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
+    user: ${DP_EMPLOYER_DB_USER:user}
+    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+    driver-class-name: org.postgresql.Driver
+
+  r2dbc:
+    url: r2dbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
+    username: ${DP_EMPLOYER_DB_USER:user}
+    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+
 eureka:
   client:
     serviceUrl:
@@ -46,11 +62,11 @@ app:
     jwt:
       secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
       #      expiration: 60000
-      expiration: 60000000
+      expiration: 600000
     refresh:
       secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
       #      expiration: 120000
-      expiration: 120000000
+      expiration: 120000
 
 management:
   endpoint:

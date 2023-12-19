@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 @Table(name = "users")
-class User(
+data class User(
     @JsonProperty("id")
     val id: Long? = null,
     var email: String = "",

@@ -3,7 +3,7 @@ package com.example.gateway.controller
 import com.example.gateway.dto.response.ExceptionDto
 import com.example.gateway.dto.response.ValidatorResponse
 import com.example.gateway.exception.EntityNotFoundException
-import io.jsonwebtoken.ExpiredJwtException
+import com.example.gateway.exception.ForbiddenException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
@@ -15,15 +15,17 @@ import org.springframework.web.server.ServerWebInputException
 
 @ControllerAdvice
 class CustomExceptionHandler {
-    @ExceptionHandler(ExpiredJwtException::class)
-    fun handleExpiredJwtException(): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+    @ExceptionHandler(ForbiddenException::class)
+    fun handleForbiddenException(): ResponseEntity<Any> {
+        val status = HttpStatus.FORBIDDEN
+        val dto = ExceptionDto("Forbidden", status.value())
+        return ResponseEntity(dto, status)
     }
 
     @ExceptionHandler(ServerWebInputException::class)
-    fun handleServerWebInputException(): ResponseEntity<ExceptionDto> {
+    fun handleServerWebInputException(ex: ServerWebInputException): ResponseEntity<ExceptionDto> {
         val status = HttpStatus.BAD_REQUEST
-        val dto = ExceptionDto("Invalid data format", status.value())
+        val dto = ExceptionDto(ex.message, status.value())
         return ResponseEntity<ExceptionDto>(dto, status)
     }
 

@@ -8,7 +8,7 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="token" type="TEXT">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="expire_at" type="TIMESTAMP">
                 <constraints nullable="false"/>

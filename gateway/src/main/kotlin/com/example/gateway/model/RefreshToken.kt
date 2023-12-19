@@ -12,7 +12,7 @@ import java.util.Date
 import java.util.UUID
 
 @Table(name = "refresh_tokens")
-class RefreshToken(
+data class RefreshToken(
     var id: UUID? = null,
     var token: String? = null,
     var expireAt: Date? = null,

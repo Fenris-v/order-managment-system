@@ -2,9 +2,6 @@ server:
   port: 8080
 
 spring:
-  cache:
-    type: caffeine
-
   main:
     allow-bean-definition-overriding: true
 
@@ -20,33 +17,6 @@ spring:
       discovery:
         enabled: true
         service-id: discovery
-
-  # TODO: replace
-  #  datasource:
-  #    url: jdbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
-  #    username: ${DP_EMPLOYER_DB_USER:user}
-  #    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
-  #    driver-class-name: org.postgresql.Driver
-
-  liquibase:
-    enabled: true
-    change-log: classpath:/db/db.changelog-master.xml
-    url: jdbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
-    user: ${DP_EMPLOYER_DB_USER:user}
-    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    defer-datasource-initialization: false
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-
-  r2dbc:
-    url: r2dbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
-    username: ${DP_EMPLOYER_DB_USER:user}
-    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
 
 eureka:
   client:
