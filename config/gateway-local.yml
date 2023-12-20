@@ -1,0 +1,79 @@
+spring:
+  cache:
+    type: caffeine
+
+  boot:
+    admin:
+      client:
+        url: ${DP_SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${DP_ADMIN_PORT:8999}
+        instance:
+          service-url: ${DP_SERVICE_PROTOCOL:http://}${GATEWAY_DOMAIN:localhost}:${GATEWAY_PORT:8080}
+          health-url: ${DP_SERVICE_PROTOCOL:http://}${GATEWAY_DOMAIN:localhost}:${GATEWAY_PORT:8080}/actuator/health
+          management-url: ${DP_SERVICE_PROTOCOL:http://}${GATEWAY_DOMAIN:localhost}:${GATEWAY_PORT:8080}/actuator
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+
+      routes:
+        - id: order_swagger
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/v3/**
+
+        - id: order
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/**
+          filters:
+            - StripPrefix=3
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/db.changelog-master.xml
+    url: jdbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
+    user: ${DP_EMPLOYER_DB_USER:user}
+    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+    driver-class-name: org.postgresql.Driver
+
+  r2dbc:
+    url: r2dbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
+    username: ${DP_EMPLOYER_DB_USER:user}
+    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
+
+app:
+  auth:
+    jwt:
+      secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+      #      expiration: 60000
+      expiration: 600000
+    refresh:
+      secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+      #      expiration: 120000
+      expiration: 120000
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'

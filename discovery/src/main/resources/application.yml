@@ -1,1 +1,42 @@
+server:
+  port: ${DISCOVERY_PORT:8000}
 
+spring:
+  application:
+    name: discovery
+
+  profiles:
+    active: native
+
+  cloud:
+    config:
+      server:
+        prefix: /config
+        native:
+          search-locations: file:${CONFIG_PATH:./config/}
+
+eureka:
+  dashboard:
+    path: /admin/dashboard
+    enabled: true
+
+  client:
+    fetch-registry: false
+    enabled: true
+    service-url:
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
