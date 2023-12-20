@@ -5,7 +5,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.22"
 }
 
-group = "com.example"
+group = "com.example.general"
 version = "0.0.1-SNAPSHOT"
 
 java {
