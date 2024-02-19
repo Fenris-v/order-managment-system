@@ -13,6 +13,9 @@ import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.UUID
 
+/**
+ * Класс представляет сущность пользовательской роли.
+ */
 @Entity
 @Table(name = "user_roles")
 data class UserRole(

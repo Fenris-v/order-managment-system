@@ -1,30 +1,33 @@
 package com.example.gateway.util
 
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.io.Decoders
-import io.jsonwebtoken.security.Keys
+import com.example.gateway.dto.JwtUserDto
+import com.example.gateway.model.User
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.lang.NonNull
 import org.springframework.stereotype.Component
-import java.util.Date
-import javax.crypto.SecretKey
+import java.time.Duration
 
+/**
+ * Утилита для работы с JWT-токенами.
+ */
 @Component
 class JwtUtil(
     @Value("\${app.auth.jwt.secret}") private val secret: String,
-    @Value("\${app.auth.jwt.expiration}") private val expiration: Int
+    @Value("\${app.auth.jwt.expiration}") private val expiration: Duration
 ) : AbstractTokenUtil(), TokenUtil {
-    override fun generateToken(claims: Map<String, Any>, username: String?): String {
-        return Jwts.builder()
-            .claims(claims)
-            .subject(username)
-            .issuedAt(Date())
-            .expiration(Date(System.currentTimeMillis() + expiration))
-            .signWith(getSignInKey())
-            .compact()
+    public override fun getExpiration(): Duration {
+        return expiration
     }
 
-    override fun getSignInKey(): SecretKey {
-        val keyBytes: ByteArray = Decoders.BASE64.decode(secret)
-        return Keys.hmacShaKeyFor(keyBytes)
+    override fun getSecret(): String {
+        return secret
+    }
+
+    override fun getClaims(@NonNull user: User): Map<String, Any> {
+        val jwtUser = JwtUserDto(user.id, user.email)
+        val claims: MutableMap<String, Any> = HashMap()
+        claims["user"] = jwtUser
+
+        return claims
     }
 }

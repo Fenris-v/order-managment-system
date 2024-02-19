@@ -1,30 +1,27 @@
 package com.example.gateway.util
 
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.io.Decoders
-import io.jsonwebtoken.security.Keys
+import com.example.gateway.model.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.util.Date
-import javax.crypto.SecretKey
+import java.time.Duration
 
+/**
+ * Утилита для работы с JWT-токенами.
+ */
 @Component
 class RefreshTokenUtil(
     @Value("\${app.auth.refresh.secret}") private val secret: String,
-    @Value("\${app.auth.refresh.expiration}") private val expiration: Int
+    @Value("\${app.auth.refresh.expiration}") private val expiration: Duration
 ) : AbstractTokenUtil(), TokenUtil {
-    override fun generateToken(claims: Map<String, Any>, username: String?): String {
-        return Jwts.builder()
-            .claims(claims)
-            .subject(username)
-            .issuedAt(Date())
-            .expiration(Date(System.currentTimeMillis() + expiration))
-            .signWith(getSignInKey())
-            .compact()
+    override fun getExpiration(): Duration {
+        return expiration
     }
 
-    override fun getSignInKey(): SecretKey {
-        val keyBytes: ByteArray = Decoders.BASE64.decode(secret)
-        return Keys.hmacShaKeyFor(keyBytes)
+    override fun getSecret(): String {
+        return secret
+    }
+
+    override fun getClaims(user: User): Map<String, Any> {
+        return HashMap()
     }
 }

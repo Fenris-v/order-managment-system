@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
+/**
+ * Запись, представляющая объект данных для аутентификации (DTO).
+ */
 data class AuthDto(
     @field:Email
     @field:NotNull

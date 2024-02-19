@@ -42,15 +42,15 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/db.changelog-master.xml
-    url: jdbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
-    user: ${DP_EMPLOYER_DB_USER:user}
-    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+    url: jdbc:postgresql://${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:5432}/${GATEWAY_DB_NAME:order_management_db}?stringtype=unspecified
+    user: ${GATEWAY_DB_USER:user}
+    password: ${GATEWAY_DB_PASSWORD:secret}
     driver-class-name: org.postgresql.Driver
 
   r2dbc:
-    url: r2dbc:postgresql://${DP_EMPLOYER_DB_HOST:localhost}:${DP_EMPLOYER_DB_PORT:5432}/${DP_EMPLOYER_DB_NAME:db}?stringtype=unspecified
-    username: ${DP_EMPLOYER_DB_USER:user}
-    password: ${DP_EMPLOYER_DB_PASSWORD:secret}
+    url: r2dbc:postgresql://${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:5432}/${GATEWAY_DB_NAME:order_management_db}?stringtype=unspecified
+    username: ${GATEWAY_DB_USER:user}
+    password: ${GATEWAY_DB_PASSWORD:secret}
 
 eureka:
   client:
@@ -61,19 +61,35 @@ app:
   auth:
     jwt:
       secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
-      #      expiration: 60000
-      expiration: 600000
+      expiration: 1d
     refresh:
       secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
-      #      expiration: 120000
-      expiration: 120000
+      expiration: 30d
 
 management:
-  endpoint:
-    health:
-      show-details: always
-
   endpoints:
     web:
       exposure:
         include: '*'
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+    enable:
+      jvm: true
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  tracing:
+    sampling:
+      probability: 1.0
