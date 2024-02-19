@@ -2,6 +2,9 @@ package com.example.gateway.dto.response
 
 import java.time.LocalDateTime
 
+/**
+ * ДТО с данными пользователя
+ */
 data class UserDto(
     val id: Long?,
     val email: String?,

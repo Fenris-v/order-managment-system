@@ -8,14 +8,16 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
-import java.util.Date
 import java.util.UUID
 
-@Table(name = "blacklist_tokens")
-data class BlacklistToken(
-    val id: UUID? = null,
-    val token: String? = null,
-    val expireAt: Date? = null,
+/**
+ * Класс представляет сущность токена доступа.
+ */
+@Table(name = "access_tokens")
+data class AccessToken(
+    var id: UUID? = null,
+    var userId: Long? = null,
+    var expireAt: LocalDateTime? = null,
 
     @CreationTimestamp
     @JsonSerialize(using = LocalDateTimeSerializer::class)

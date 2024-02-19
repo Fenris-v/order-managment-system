@@ -8,14 +8,17 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
-import java.util.Date
 import java.util.UUID
 
+/**
+ * Класс представляет сущность токена обновления.
+ */
 @Table(name = "refresh_tokens")
 data class RefreshToken(
     var id: UUID? = null,
-    var token: String? = null,
-    var expireAt: Date? = null,
+    var userId: Long? = null,
+    var accessId: UUID? = null,
+    var expireAt: LocalDateTime? = null,
 
     @CreationTimestamp
     @JsonSerialize(using = LocalDateTimeSerializer::class)

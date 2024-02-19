@@ -14,6 +14,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
+/**
+ * Класс представляет сущность пользователя.
+ */
 @Table(name = "users")
 data class User(
     @JsonProperty("id")

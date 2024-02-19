@@ -1,6 +1,8 @@
 package com.example.gateway.config.security
 
 import com.example.gateway.dto.request.security.AuthDto
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.core.ResolvableType
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -15,11 +17,25 @@ import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 import java.util.Collections
 
+private val log: KLogger = KotlinLogging.logger {}
+
+/**
+ * Конвертер для преобразования запроса с данными аутентификации в объект Authentication.
+ * <p>
+ * Этот конвертер предоставляет метод для преобразования данных запроса в объект Authentication.
+ */
 @Component
 class JwtConverter(private val serverCodecConfigurer: ServerCodecConfigurer) : ServerAuthenticationConverter {
     private val authDtoType = ResolvableType.forClass(AuthDto::class.java)
 
+    /**
+     * Преобразует данные запроса в объект Authentication.
+     *
+     * @param exchange объект ServerWebExchange, представляющий текущий обмен
+     * @return Mono, представляющий объект Authentication или ошибку в случае неудачи
+     */
     override fun convert(exchange: ServerWebExchange?): Mono<Authentication> {
+        log.debug { "Чтение данных для аунтентификации пользователя" }
         if (exchange == null) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request")
         }

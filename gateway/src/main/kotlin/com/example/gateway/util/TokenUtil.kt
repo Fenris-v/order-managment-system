@@ -1,7 +1,18 @@
 package com.example.gateway.util
 
-import org.springframework.security.core.userdetails.UserDetails
+import com.example.gateway.model.User
+import java.util.UUID
 
+/**
+ * Интерфейс для утилиты работы с токенами.
+ */
 interface TokenUtil {
-    fun generateToken(userDetails: UserDetails): String
+    /**
+     * Генерация токена для конкретного пользователя.
+     *
+     * @param user Пользователь
+     * @param id   Идентификатор токена
+     * @return Строка со сгенерированным токеном
+     */
+    fun generateToken(user: User, id: UUID): String
 }

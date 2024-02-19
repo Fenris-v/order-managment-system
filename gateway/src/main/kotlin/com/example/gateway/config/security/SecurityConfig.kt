@@ -2,7 +2,6 @@ package com.example.gateway.config.security
 
 import com.example.gateway.config.filter.JWTReactiveAuthorizationFilter
 import com.example.gateway.config.security.handler.AuthorizationExceptionHandler
-import com.example.gateway.controller.SecurityController
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -29,6 +28,9 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.server.ServerWebExchange
 
+/**
+ * Конфигурационный класс для настроек безопасности.
+ */
 @Configuration
 @EnableWebFluxSecurity
 class SecurityConfig : WebFluxConfigurer {
@@ -37,11 +39,25 @@ class SecurityConfig : WebFluxConfigurer {
         private val EXCLUDED_PATHS: Array<String> = arrayOf("/api/v1/user/register", "/api/v1/user/refresh")
     }
 
+    /**
+     * Определяет бин PasswordEncoder для кодирования и проверки паролей.
+     *
+     * @return Бин Argon2PasswordEncoder.
+     */
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return Argon2PasswordEncoder(16, 32, 1, 4096, 3)
     }
 
+    /**
+     * Конфигурирует цепочку фильтров безопасности и механизмы аутентификации.
+     *
+     * @param http                           Экземпляр ServerHttpSecurity для конфигурации безопасности.
+     * @param exceptionHandler               Пользовательский обработчик исключений для авторизационных исключений.
+     * @param jwtAuthenticationFilter     Фильтр аутентификации для обработки токенов JWT.
+     * @param jwtReactiveAuthorizationFilter Фильтр авторизации для обработки токенов JWT реактивно.
+     * @return Настроенная цепочка фильтров безопасности.
+     */
     @Bean
     fun filterChain(
         http: ServerHttpSecurity,
@@ -56,6 +72,7 @@ class SecurityConfig : WebFluxConfigurer {
             .formLogin { it.disable() }
             .authorizeExchange {
                 it.pathMatchers(*EXCLUDED_PATHS).permitAll()
+                    .pathMatchers("/actuator/**").permitAll()
                     .anyExchange().authenticated()
             }
             .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
@@ -76,13 +93,21 @@ class SecurityConfig : WebFluxConfigurer {
         return http.build()
     }
 
+    /**
+     * Конфигурирует AuthenticationWebFilter для обработки токенов JWT.
+     *
+     * @param jwtConverter                          ServerAuthenticationConverter для преобразования токенов JWT.
+     * @param reactiveAuthenticationManager         ReactiveAuthenticationManager для управления аутентификацией.
+     * @param serverAuthenticationSuccessHandler    Обработчик успешной аутентификации.
+     * @param jwtServerAuthenticationFailureHandler Обработчик ошибок аутентификации.
+     * @return Настроенный AuthenticationWebFilter.
+     */
     @Bean
     fun authenticationWebFilter(
         jwtConverter: ServerAuthenticationConverter,
         reactiveAuthenticationManager: ReactiveAuthenticationManager,
         serverAuthenticationSuccessHandler: ServerAuthenticationSuccessHandler,
-        jwtServerAuthenticationFailureHandler: ServerAuthenticationFailureHandler,
-        securityController: SecurityController
+        jwtServerAuthenticationFailureHandler: ServerAuthenticationFailureHandler
     ): AuthenticationWebFilter {
         val authenticationWebFilter = AuthenticationWebFilter(reactiveAuthenticationManager)
         authenticationWebFilter.setRequiresAuthenticationMatcher {
@@ -96,6 +121,14 @@ class SecurityConfig : WebFluxConfigurer {
         return authenticationWebFilter
     }
 
+    /**
+     * Конфигурирует ReactiveAuthenticationManager для управления аутентификацией с использованием реактивного сервиса
+     * пользовательских данных.
+     *
+     * @param reactiveUserDetailsService Реактивный сервис для загрузки пользовательских данных.
+     * @param passwordEncoder            PasswordEncoder для кодирования и проверки паролей.
+     * @return Настроенный ReactiveAuthenticationManager.
+     */
     @Bean
     fun reactiveAuthenticationManager(
         reactiveUserDetailsService: ReactiveUserDetailsService,
