@@ -48,7 +48,7 @@ class JWTServerAuthenticationSuccessHandler(
             throw BadRequestException()
         }
 
-        log.debug { "Получение пользователя для аутентификации" }
+        log.info { "Получение пользователя ${authentication.name} для аутентификации" }
         val principal = authentication.principal
         if (principal !is User) {
             log.info { "Ошибка получения пользователя" }
