@@ -1,0 +1,36 @@
+spring:
+  cache:
+    type: caffeine
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/db.changelog-test.xml
+    driver-class-name: org.postgresql.Driver
+
+app:
+  auth:
+    jwt:
+      secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+      expiration: 1d
+    refresh:
+      secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
+      expiration: 30d
+
+logging:
+  level:
+    root: debug

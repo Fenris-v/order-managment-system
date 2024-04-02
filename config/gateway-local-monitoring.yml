@@ -19,12 +19,25 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins: "*"
-            allowedMethods: "GET,POST,PUT,DELETE"
+            allowedMethods: "*"
             allowedHeaders: "*"
       httpclient:
         wiretap: true
       httpserver:
         wiretap: true
+
+      routes:
+        - id: order_swagger
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/v3/**
+
+        - id: order
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/**
+          filters:
+            - StripPrefix=3
 
   liquibase:
     enabled: true
@@ -52,3 +65,35 @@ app:
     refresh:
       secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
       expiration: 30d
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+    enable:
+      jvm: true
+
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://${ZIPKIN_DOMAIN:localhost}:${ZIPKIN_PORT:9411}/api/v2/spans

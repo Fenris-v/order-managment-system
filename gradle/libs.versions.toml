@@ -23,6 +23,8 @@ reactorTestVersion = "3.5.8"
 
 koltinPluginVersion = "1.8.22"
 
+testContainersVersion = "1.19.7"
+
 [libraries]
 springWebflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "springBootVersion" }
 springConfig = { module = "org.springframework.cloud:spring-cloud-starter-config", version.ref = "springCloudVersion" }
@@ -65,13 +67,17 @@ logback = { module = "net.logstash.logback:logstash-logback-encoder", version.re
 springTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBootVersion" }
 reactorTest = { module = "io.projectreactor:reactor-test", version.ref = "reactorTestVersion" }
 
+testContainers = { module = "org.testcontainers:testcontainers", version.ref = "testContainersVersion" }
+testContainersJunit = { module = "org.testcontainers:junit-jupiter", version.ref = "testContainersVersion" }
+testContainersPostgres = { module = "org.testcontainers:postgresql", version.ref = "testContainersVersion" }
+
 [bundles]
 spring = ["springWebflux", "springConfig", "springBootstrap", "springEureka", "springConfigClient"]
 jwt = ["jjwtApi", "jjwtImpl", "jjwtJackson"]
 postgres = ["postgresDriver", "r2dbc", "liquibase", "jdbc", "springR2dbc"]
 monitoring = ["springAdminClient", "actuator", "prometheus", "tracingBridge", "zipkin"]
 logs = ["logging", "logback"]
-test = ["springTest", "reactorTest"]
+test = ["springTest", "reactorTest", "testContainersPostgres", "testContainers", "testContainersJunit"]
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "koltinPluginVersion" }

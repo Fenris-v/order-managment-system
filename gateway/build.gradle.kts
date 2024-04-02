@@ -40,7 +40,7 @@ dependencies {
     versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
     versionCatalog.findBundle("logs").ifPresent { implementation(it) }
 
-    versionCatalog.findBundle("test").ifPresent { implementation(it) }
+    versionCatalog.findBundle("test").ifPresent { testImplementation(it) }
 }
 
 tasks.withType<KotlinCompile> {

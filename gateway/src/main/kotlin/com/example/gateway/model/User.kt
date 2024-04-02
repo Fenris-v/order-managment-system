@@ -1,5 +1,6 @@
 package com.example.gateway.model
 
+import com.example.gateway.enums.UserRoleType
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -50,7 +51,7 @@ data class User(
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf(SimpleGrantedAuthority("ROLE_USER"))
+        return mutableListOf(SimpleGrantedAuthority(UserRoleType.ROLE_USER.name))
     }
 
     override fun getPassword(): String {
