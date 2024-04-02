@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
+
 plugins {
     id("org.springframework.boot") version "3.1.5"
     id("io.spring.dependency-management") version "1.1.3"
@@ -19,12 +21,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.cloud:spring-cloud-config-server:4.0.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:4.0.2")
-
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
-    implementation("io.projectreactor:reactor-test:3.5.8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
+    versionCatalog.findLibrary("springConfigServer").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("springEurekaServer").ifPresent { implementation(it) }
 }
 
 tasks.withType<KotlinCompile> {

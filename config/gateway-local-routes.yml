@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: order_swagger
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/v3/**
+
+        - id: order
+          uri: lb://${ORDER_DOMAIN:order}
+          predicates:
+            - Path=/api/v1/order/**
+          filters:
+            - StripPrefix=3

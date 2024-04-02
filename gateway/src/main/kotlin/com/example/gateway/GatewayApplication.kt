@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
+import reactor.core.publisher.Hooks
 
 /**
  * Основной класс микросервиса Gateway, который также содержит Spring Security.
@@ -19,5 +20,6 @@ class GatewayApplication
  * @param args Аргументы, указанные при запуске приложения
  */
 fun main(args: Array<String>) {
+    Hooks.enableAutomaticContextPropagation()
     runApplication<GatewayApplication>(*args)
 }

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 0
 
 spring:
   main:
@@ -9,7 +9,7 @@ spring:
     name: gateway
 
   profiles:
-    active: local
+    active: local, local-routes, local-monitoring
 
   cloud:
     config:
