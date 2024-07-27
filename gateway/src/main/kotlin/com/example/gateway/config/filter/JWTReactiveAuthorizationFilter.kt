@@ -6,6 +6,7 @@ import com.example.gateway.dto.response.ExceptionDto
 import com.example.gateway.exception.EntityNotFoundException
 import com.example.gateway.exception.ForbiddenException
 import com.example.gateway.exception.JsonParseException
+import com.example.gateway.exception.UnprocessableException
 import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.service.UserDetailsService
@@ -113,7 +114,13 @@ class JWTReactiveAuthorizationFilter(
                     UsernamePasswordAuthenticationToken(jwtUtil.extractUsername(token), null, roles)
                 chain.filter(exchange).contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))
             }.onErrorResume { ex ->
-                val status = if (ex is ResponseStatusException) ex.statusCode else HttpStatus.FORBIDDEN
+                log.error(ex) { ex.message }
+                val status = when (ex) {
+                    is ResponseStatusException -> ex.statusCode
+                    is UnprocessableException -> HttpStatus.UNPROCESSABLE_ENTITY
+                    else -> HttpStatus.FORBIDDEN
+                }
+
                 exceptionHandler.handleAuthorizationException(ex.message ?: DEFAULT_EXCEPTION_MESSAGE, exchange, status)
             }
     }

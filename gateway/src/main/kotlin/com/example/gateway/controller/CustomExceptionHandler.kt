@@ -4,6 +4,7 @@ import com.example.gateway.dto.response.ExceptionDto
 import com.example.gateway.dto.response.ValidatorResponse
 import com.example.gateway.exception.EntityNotFoundException
 import com.example.gateway.exception.ForbiddenException
+import com.example.gateway.exception.ThrottleException
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -38,6 +39,20 @@ class CustomExceptionHandler {
     }
 
     /**
+     * Обрабатывает исключение ThrottleException и возвращает ответ с кодом 403 и информацией об ошибке.
+     *
+     * @param ex Исключение при ошибке доступа.
+     * @return Ответ с информацией об ошибке и кодом 403.
+     */
+    @ExceptionHandler(ThrottleException::class)
+    fun handleThrottleException(ex: ThrottleException): ResponseEntity<Any> {
+        log.error(ex) { ex.message }
+        val status = HttpStatus.FORBIDDEN
+        val dto = ExceptionDto(ex.message!!, status.value())
+        return ResponseEntity(dto, status)
+    }
+
+    /**
      * Обрабатывает исключение ServerWebInputException и возвращает ответ с кодом 400 и информацией об ошибке.
      *
      * @param ex Исключение при ошибках ввода.
@@ -59,7 +74,6 @@ class CustomExceptionHandler {
      */
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFoundException(ex: EntityNotFoundException): ResponseEntity<Any> {
-        log.error(ex) { ex.message }
         val status = HttpStatus.NOT_FOUND
         val dto = ExceptionDto("Not found", status.value())
         return ResponseEntity(dto, status)

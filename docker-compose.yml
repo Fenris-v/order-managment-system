@@ -54,18 +54,18 @@ services:
       timeout: 5s
     container_name: pgsql_db
 
-  #  mongo_auth:
-  #    image: mongo:6.0.11
-  #    container_name: mongo_auth
-  #    environment:
-  #      MONGO_INITDB_ROOT_USERNAME: root
-  #      MONGO_INITDB_ROOT_PASSWORD: example
-  #    volumes:
-  #      - auth:/data/db
-  #    ports:
-  #      - "27017:27017"
-  #    networks:
-  #      - oms
+  mongo_auth:
+    image: mongo:6.0.11
+    container_name: mongo_auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - auth:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - oms
 
   #  mongo_order:
   #    image: mongo:6.0.11
@@ -212,8 +212,8 @@ networks:
 volumes:
   db:
     driver: local
-#  auth:
-#    driver: local
+  auth:
+    driver: local
 #  order:
 #    driver: local
 #  payment:

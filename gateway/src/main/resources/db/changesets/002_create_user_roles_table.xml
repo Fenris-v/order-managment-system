@@ -6,7 +6,7 @@
         <sql>CREATE TYPE role AS ENUM('USER', 'ADMIN')</sql>
 
         <createTable tableName="user_roles">
-            <column name="id" type="UUID">
+            <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
 
@@ -29,5 +29,8 @@
         <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="user_id"
                                  constraintName="user_roles_users_user_id_fk" referencedTableName="users"
                                  referencedColumnNames="id" onDelete="CASCADE"/>
+
+        <sql>INSERT INTO user_roles(user_id, role, created_at, updated_at)
+             VALUES (1, 'ADMIN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)</sql>
     </changeSet>
 </databaseChangeLog>

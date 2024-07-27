@@ -2,6 +2,7 @@ package com.example.gateway.config.security
 
 import com.example.gateway.config.filter.JWTReactiveAuthorizationFilter
 import com.example.gateway.config.security.handler.AuthorizationExceptionHandler
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -33,10 +34,9 @@ import org.springframework.web.server.ServerWebExchange
  */
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig : WebFluxConfigurer {
+class SecurityConfig(@Value("\${security.excluded}") private val excludedPaths: Array<String>) : WebFluxConfigurer {
     companion object {
         const val BEARER: String = "Bearer "
-        private val EXCLUDED_PATHS: Array<String> = arrayOf("/api/v1/user/register", "/api/v1/user/refresh")
     }
 
     /**
@@ -71,7 +71,7 @@ class SecurityConfig : WebFluxConfigurer {
             .httpBasic { it.authenticationEntryPoint(HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)) }
             .formLogin { it.disable() }
             .authorizeExchange {
-                it.pathMatchers(*EXCLUDED_PATHS).permitAll()
+                it.pathMatchers(*excludedPaths).permitAll()
                     .pathMatchers("/actuator/**").permitAll()
                     .anyExchange().authenticated()
             }

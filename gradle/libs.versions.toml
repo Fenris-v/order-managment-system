@@ -10,11 +10,14 @@ postgresVersion = "42.7.2"
 r2dbcVersion = "1.0.2.RELEASE"
 liquibaseVersion = "4.23.0"
 
+springDocVersion = "2.6.0"
+
 prometheusVersion = "1.12.3"
 tracingBridgeVersion = "1.2.3"
 zipkinVersion = "2.17.2"
 
 koltinReflectVersion = "1.8.20-RC"
+koltinSeializationVersion = "1.7.1"
 
 loggingVersion = "6.0.3"
 logbackVersion = "7.4"
@@ -49,6 +52,8 @@ springR2dbc = { module = "org.springframework.data:spring-data-r2dbc", version.r
 liquibase = { module = "org.liquibase:liquibase-core", version.ref = "liquibaseVersion" }
 jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc", version.ref = "springBootVersion" }
 
+swagger = { module = "org.springdoc:springdoc-openapi-starter-webflux-ui", version.ref = "springDocVersion" }
+
 springAdminClient = { module = "de.codecentric:spring-boot-admin-starter-client", version.ref = "springBootVersion" }
 prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometheusVersion" }
 actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBootVersion" }
@@ -59,7 +64,11 @@ jjwtApi = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwtVersion" }
 jjwtImpl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwtVersion" }
 jjwtJackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwtVersion" }
 
+mailing = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "springBootVersion" }
+thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBootVersion" }
+
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "koltinReflectVersion" }
+serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "koltinSeializationVersion" }
 
 logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "loggingVersion" }
 logback = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logbackVersion" }
@@ -75,6 +84,7 @@ testContainersPostgres = { module = "org.testcontainers:postgresql", version.ref
 spring = ["springWebflux", "springConfig", "springBootstrap", "springEureka", "springConfigClient"]
 jwt = ["jjwtApi", "jjwtImpl", "jjwtJackson"]
 postgres = ["postgresDriver", "r2dbc", "liquibase", "jdbc", "springR2dbc"]
+mailing = ["mailing", "thymeleaf"]
 monitoring = ["springAdminClient", "actuator", "prometheus", "tracingBridge", "zipkin"]
 logs = ["logging", "logback"]
 test = ["springTest", "reactorTest", "testContainersPostgres", "testContainers", "testContainersJunit"]

@@ -2,18 +2,25 @@ package com.example.gateway.service
 
 import com.example.gateway.dto.AccessTokenDto
 import com.example.gateway.dto.RefreshTokenDto
+import com.example.gateway.dto.response.JwtResponse
 import com.example.gateway.model.AccessToken
 import com.example.gateway.model.RefreshToken
 import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.repository.RefreshTokenRepository
+import com.example.gateway.repository.UserRepository
 import com.example.gateway.util.JwtUtil
 import com.example.gateway.util.RefreshTokenUtil
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID
+
+private val log: KLogger = KotlinLogging.logger {}
 
 /**
  * Сервис для работы с токенами доступа и обновления.
@@ -21,10 +28,43 @@ import java.util.UUID
 @Service
 class TokenService(
     private val jwtUtil: JwtUtil,
+    private val userRepository: UserRepository,
     private val refreshTokenUtil: RefreshTokenUtil,
     private val accessTokenRepository: AccessTokenRepository,
-    private val refreshTokenRepository: RefreshTokenRepository,
+    private val refreshTokenRepository: RefreshTokenRepository
 ) {
+    /**
+     * Генерирует пару токенов доступа и обновления для пользователя.
+     *
+     * @param user Сущность пользователя
+     * @return Моно с токенами доступа и обновления
+     */
+    @Transactional
+    fun getTokenPair(user: User): Mono<JwtResponse> {
+        log.debug { "Выпуск авторизационных токенов" }
+        val accessId = UUID.randomUUID()
+        return getAccessToken(accessId, user)
+            .zipWith(getRefreshToken(accessId, user))
+            .map { JwtResponse(it.t1.token, it.t2.token, getAccessExpiration()) }
+    }
+
+    /**
+     * Генерирует пару токенов доступа и обновления для пользователя на основании токена обновления.
+     *
+     * @param token Токен обновления
+     * @return Моно с токенами доступа и обновления
+     */
+    @Transactional
+    fun getTokenPair(token: String): Mono<JwtResponse> {
+        val accessId = UUID.randomUUID()
+        return userRepository.findUserByEmailIgnoreCase(refreshTokenUtil.extractUsername(token))
+            .flatMap {
+                getAccessToken(accessId, it)
+                    .zipWith(getRefreshToken(accessId, it))
+                    .map { tuple -> JwtResponse(tuple.t1.token, tuple.t2.token, getAccessExpiration()) }
+            }
+    }
+
     /**
      * Генерирует и сохраняет токен доступа для пользователя.
      *
@@ -32,7 +72,7 @@ class TokenService(
      * @param user     Пользователь
      * @return Моно с токеном доступа
      */
-    fun getAccessToken(accessId: UUID, user: User): Mono<AccessTokenDto> {
+    private fun getAccessToken(accessId: UUID, user: User): Mono<AccessTokenDto> {
         val token: String = jwtUtil.generateToken(user, accessId)
         val expiration: LocalDateTime = jwtUtil.extractExpiration(token)
             .toInstant()
@@ -51,7 +91,7 @@ class TokenService(
      * @param user     Пользователь
      * @return Моно с токеном обновления
      */
-    fun getRefreshToken(accessId: UUID, user: User): Mono<RefreshTokenDto> {
+    private fun getRefreshToken(accessId: UUID, user: User): Mono<RefreshTokenDto> {
         val refreshId: UUID = UUID.randomUUID()
         val token: String = refreshTokenUtil.generateToken(user, refreshId)
         val expiration: LocalDateTime = refreshTokenUtil.extractExpiration(token)
@@ -64,12 +104,7 @@ class TokenService(
         return refreshTokenRepository.save(refreshToken).thenReturn(refreshTokenDto)
     }
 
-    /**
-     * Возвращает время жизни токена доступа.
-     *
-     * @return Время жизни токена доступа
-     */
-    fun getAccessExpiration(): Long {
+    private fun getAccessExpiration(): Long {
         return jwtUtil.getExpiration().toSeconds()
     }
 }

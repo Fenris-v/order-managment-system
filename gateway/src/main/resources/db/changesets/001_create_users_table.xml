@@ -16,6 +16,7 @@
             </column>
             <column name="name" type="VARCHAR"/>
             <column name="lastname" type="VARCHAR"/>
+            <column name="confirmation_token" type="VARCHAR"/>
             <column name="verified_at" type="TIMESTAMP"/>
             <column name="created_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
@@ -24,5 +25,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql>INSERT INTO users(email, password, name, lastname, verified_at, created_at, updated_at)
+             VALUES ('admin@mail.ru',
+                     '$argon2id$v=19$m=4096,t=3,p=1$fS7PWU1sTT3qrjX/As9U6A$npgN3Gtg+K/AvVSUnWxvCPDbIL4Kl+4sqrrXXniYZcM',
+                     'Admin', 'Admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)</sql>
     </changeSet>
 </databaseChangeLog>
