@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html style="font-family:arial, 'helvetica neue', helvetica, sans-serif" xmlns="http://www.w3.org/1999/xhtml" lang="ru"
+      th:fragment="layout(content, title)">
+
+<div th:replace="~{ fragments/mail_head_fragment :: head(${title}) }"></div>
+
+<body style="width:100%;font-family:arial, 'helvetica neue', helvetica, sans-serif;text-size-adjust:100%;padding:0px;margin:0px;cursor:auto;">
+<div class="es-wrapper-color" style="background-color:#f0f0f0"> <!--[if gte mso 9]>
+    <v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
+        <v:fill type="tile" color="#F0F0F0"></v:fill>
+    </v:background> <![endif]-->
+    <table cellpadding="0" cellspacing="0" class="es-wrapper"
+           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top;background-color:#f0f0f0;"
+           width="100%">
+        <tbody>
+        <tr>
+            <td style="padding:0;margin:0" valign="top">
+                <th:block
+                        th:insert="~{ fragments/mail_header_fragment :: header(${title}) }"></th:block>
+
+                <div th:replace="${content}"></div>
+
+                <th:block th:insert="~{ fragments/mail_footer_fragment :: footer }"></th:block>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

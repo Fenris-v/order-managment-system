@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.3"
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 group = "com.example.gateway"
@@ -22,7 +23,12 @@ val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExt
 println("Library aliases: ${versionCatalog.bundleAliases}")
 
 dependencies {
+    versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
+
+    versionCatalog.findLibrary("serialization").ifPresent { implementation(it) }
     versionCatalog.findLibrary("kotlinReflect").ifPresent { implementation(it) }
+
+    versionCatalog.findBundle("mailing").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("spring").ifPresent { implementation(it) }
     versionCatalog.findBundle("jwt").ifPresent { implementation(it) }

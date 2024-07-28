@@ -1,4 +1,11 @@
 spring:
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    name: ${SMTP_USERNAME:OMS}
+    email: ${SMTP_EMAIL:example@gmail.com}
+    password: ${SMTP_PASSWORD:secret}
+
   cache:
     type: caffeine
 
@@ -45,6 +52,7 @@ eureka:
       defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
 
 app:
+  domain: ${APP_DOMAIN:http://localhost:8080}
   auth:
     jwt:
       secret: ${JWT_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
@@ -52,3 +60,16 @@ app:
     refresh:
       secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
       expiration: 30d
+
+  ninjas:
+    base-url: https://api.api-ninjas.com/v1/
+    api-key: ${NINJAS_API_KEY:3HPpw8Okft+27wVO4pDuow==h4XmOUNKkShZU3if}
+
+springdoc:
+  domain: ${APP_DOMAIN:http://localhost:8080}
+  prefix: /api/v1
+  swagger-ui:
+    path: /swagger
+  api-docs:
+    path: /v3/api-docs
+    enabled: true

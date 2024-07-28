@@ -1,4 +1,4 @@
-package com.example.gateway.util
+package com.example.gateway.util.jwt
 
 import com.example.gateway.model.User
 import org.springframework.beans.factory.annotation.Value

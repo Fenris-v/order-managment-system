@@ -4,7 +4,7 @@ import com.example.gateway.config.security.handler.AuthorizationExceptionHandler
 import com.example.gateway.dto.response.ExceptionDto
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.service.UserDetailsService
-import com.example.gateway.util.JwtUtil
+import com.example.gateway.util.jwt.JwtUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -20,6 +21,7 @@ import java.time.LocalDateTime
  */
 @Table(name = "users")
 data class User(
+    @Id
     @JsonProperty("id")
     val id: Long? = null,
     var email: String = "",
@@ -29,6 +31,7 @@ data class User(
 
     var name: String? = null,
     var lastname: String? = null,
+    var confirmationToken: String? = null,
 
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)
@@ -58,6 +61,10 @@ data class User(
         return password
     }
 
+    fun setPassword(password: String) {
+        this.password = password
+    }
+
     override fun getUsername(): String {
         return email
     }
@@ -75,6 +82,6 @@ data class User(
     }
 
     override fun isEnabled(): Boolean {
-        return true
+        return verifiedAt != null
     }
 }

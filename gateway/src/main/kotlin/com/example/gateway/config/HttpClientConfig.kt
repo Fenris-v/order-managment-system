@@ -3,6 +3,7 @@ package com.example.gateway.config
 import io.netty.resolver.DefaultAddressResolverGroup
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 
 /**
@@ -18,5 +19,15 @@ class HttpClientConfig {
     @Bean
     fun httpClient(): HttpClient {
         return HttpClient.create().resolver(DefaultAddressResolverGroup.INSTANCE)
+    }
+
+    /**
+     * Создает и настраивает WebClient.
+     *
+     * @return WebClient
+     */
+    @Bean
+    fun webClient(): WebClient {
+        return WebClient.create()
     }
 }

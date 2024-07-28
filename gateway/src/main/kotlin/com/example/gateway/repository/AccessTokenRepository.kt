@@ -29,4 +29,23 @@ interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
     @Modifying
     @Query(value = "DELETE FROM access_tokens WHERE id = :id")
     override fun deleteById(id: UUID): Mono<Void>
+
+    /**
+     * Удаляет все токены пользователя кроме токена с переданным идентификатором.
+     *
+     * @param id Идентификатор токена, который необходимо удалить.
+     * @return Mono, завершающийся при успешном удалении токена.
+     */
+    @Modifying
+    @Query(value = "DELETE FROM access_tokens WHERE id <> :id")
+    fun deleteWhereIdNot(id: UUID): Mono<Void>
+
+    /**
+     * Удаляет все токены пользователя.
+     *
+     * @param userId Идентификатор пользователя, которому необходимо удалить все токены.
+     * @return Mono, завершающийся при успешном удалении токена.
+     */
+    @Modifying
+    fun deleteAllByUserId(userId: Long): Mono<Void>
 }

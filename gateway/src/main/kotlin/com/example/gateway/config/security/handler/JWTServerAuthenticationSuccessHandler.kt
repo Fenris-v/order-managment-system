@@ -1,15 +1,12 @@
 package com.example.gateway.config.security.handler
 
-import com.example.gateway.dto.AccessTokenDto
-import com.example.gateway.dto.RefreshTokenDto
-import com.example.gateway.dto.response.JwtResponse
 import com.example.gateway.exception.BadRequestException
-import com.example.gateway.exception.JsonParseException
 import com.example.gateway.model.User
 import com.example.gateway.service.TokenService
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
@@ -18,7 +15,6 @@ import org.springframework.security.web.server.authentication.ServerAuthenticati
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
-import java.util.UUID
 
 private val log: KLogger = KotlinLogging.logger {}
 
@@ -55,32 +51,15 @@ class JWTServerAuthenticationSuccessHandler(
             return Mono.empty()
         }
 
-        val accessId = UUID.randomUUID()
-        log.debug { "Выпуск авторизационных токенов" }
-        val accessToken: Mono<AccessTokenDto> = tokenService.getAccessToken(accessId, principal)
-        val refreshToken: Mono<RefreshTokenDto> = tokenService.getRefreshToken(accessId, principal)
         val response = webFilterExchange.exchange.response
         response.headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 
-        log.debug { "Формирование ответа с токенами" }
-        val dataBuffer = Mono
-            .zip(accessToken, refreshToken)
-            .handle { tuple, sink ->
-                try {
-                    val responseDto = JwtResponse(
-                        tuple.t1.token,
-                        tuple.t2.token,
-                        tokenService.getAccessExpiration()
-                    )
-
-                    response.headers.contentType = MediaType.APPLICATION_JSON
-                    sink.next(response.bufferFactory().wrap(objectMapper.writeValueAsBytes(responseDto)))
-                } catch (ex: Exception) {
-                    log.error(ex) { "Ошибка конфертирования данных в JSON" }
-                    sink.error(JsonParseException())
-                }
+        return tokenService.getTokenPair(principal)
+            .flatMap {
+                log.debug { "Формирование ответа" }
+                val dataBuffer: DataBuffer = response.bufferFactory().wrap(objectMapper.writeValueAsBytes(it))
+                response.headers.contentType = MediaType.APPLICATION_JSON
+                response.writeWith(Mono.just(dataBuffer))
             }
-
-        return response.writeWith(dataBuffer)
     }
 }

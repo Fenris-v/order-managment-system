@@ -13,3 +13,18 @@ spring:
             - Path=/api/v1/order/**
           filters:
             - StripPrefix=3
+
+security:
+  excluded:
+    get: >
+      /api/v1/user/password,
+      /api/v1/user/verify,
+
+      /webjars/**,
+      /swagger,
+      /v3/**
+
+    post: >
+      /api/v1/user/password/reset,
+      /api/v1/user/register,
+      /api/v1/user/refresh,
