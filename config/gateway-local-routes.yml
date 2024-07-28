@@ -15,10 +15,16 @@ spring:
             - StripPrefix=3
 
 security:
-  excluded: >
-    /api/v1/user/register,
-    /api/v1/user/refresh,
-    /api/v1/user/verify,
-    /webjars/**,
-    /swagger,
-    /v3/**
+  excluded:
+    get: >
+      /api/v1/user/password,
+      /api/v1/user/verify,
+
+      /webjars/**,
+      /swagger,
+      /v3/**
+
+    post: >
+      /api/v1/user/password/reset,
+      /api/v1/user/register,
+      /api/v1/user/refresh,

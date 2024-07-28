@@ -9,8 +9,8 @@ import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.repository.RefreshTokenRepository
 import com.example.gateway.repository.UserRepository
-import com.example.gateway.util.JwtUtil
-import com.example.gateway.util.RefreshTokenUtil
+import com.example.gateway.util.jwt.JwtUtil
+import com.example.gateway.util.jwt.RefreshTokenUtil
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service

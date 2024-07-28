@@ -1,9 +1,10 @@
 package com.example.gateway.service
 
 import com.example.gateway.config.security.SecurityConfig.Companion.BEARER
+import com.example.gateway.dto.NinjaPasswordResponse
 import com.example.gateway.dto.VerifyToken
 import com.example.gateway.dto.request.security.AuthDto
-import com.example.gateway.dto.request.security.EmailChangingRequest
+import com.example.gateway.dto.request.security.EmailRequest
 import com.example.gateway.dto.request.security.PasswordChangingRequest
 import com.example.gateway.dto.request.security.UserUpdatingRequest
 import com.example.gateway.dto.response.FullUserDto
@@ -19,8 +20,9 @@ import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.repository.RefreshTokenRepository
 import com.example.gateway.repository.UserRepository
-import com.example.gateway.util.JwtUtil
-import com.example.gateway.util.RefreshTokenUtil
+import com.example.gateway.service.mail.MailService
+import com.example.gateway.util.jwt.JwtUtil
+import com.example.gateway.util.jwt.RefreshTokenUtil
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.json.Json
@@ -49,9 +51,11 @@ class UserDetailsService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val refreshTokenUtil: RefreshTokenUtil,
+    private val passwordService: NinjasPasswordService,
     private val eventPublisher: ApplicationEventPublisher,
     private val accessTokenRepository: AccessTokenRepository,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenRepository: RefreshTokenRepository,
+    private val mailService: MailService
 ) : ReactiveUserDetailsService {
     /**
      * Получение пользователя по id.
@@ -71,8 +75,7 @@ class UserDetailsService(
      */
     @Transactional(readOnly = true)
     fun getUserById(userId: Long): Mono<UserDto> {
-        return userRepository.findById(userId)
-            .switchIfEmpty(Mono.error(EntityNotFoundException()))
+        return userRepository.findById(userId).switchIfEmpty(Mono.error(EntityNotFoundException()))
             .map { userMapper.mapEntityToDto(it) }
     }
 
@@ -84,19 +87,17 @@ class UserDetailsService(
      */
     @Transactional
     fun updateUser(request: UserUpdatingRequest): Mono<FullUserDto> {
-        return getCurrentUser()
-            .flatMap {
-                when {
-                    it !is User -> Mono.error(UnauthorizedException())
-                    else -> {
-                        it.name = request.name
-                        it.lastname = request.lastname
-                        it.updatedAt = LocalDateTime.now()
-                        userRepository.save(it)
-                    }
+        return getCurrentUser().flatMap {
+            when {
+                it !is User -> Mono.error(UnauthorizedException())
+                else -> {
+                    it.name = request.name
+                    it.lastname = request.lastname
+                    it.updatedAt = LocalDateTime.now()
+                    userRepository.save(it)
                 }
             }
-            .map { userMapper.mapEntityToFullUserDto(it) }
+        }.map { userMapper.mapEntityToFullUserDto(it) }
     }
 
     /**
@@ -107,24 +108,42 @@ class UserDetailsService(
      */
     @Transactional
     fun changePassword(authorization: String, request: PasswordChangingRequest): Mono<Void> {
-        return getCurrentUser()
-            .flatMap {
-                when {
-                    !passwordEncoder.matches(request.password, it.password) -> Mono
-                        .error(UnprocessableException("Неправильный пароль"))
+        return getCurrentUser().flatMap {
+            when {
+                !passwordEncoder.matches(
+                    request.password,
+                    it.password
+                ) -> Mono.error(UnprocessableException("Неправильный пароль"))
 
-                    else -> {
-                        it.password = passwordEncoder.encode(request.newPassword)
-                        it.updatedAt = LocalDateTime.now()
-                        userRepository.save(it)
-                    }
+                else -> {
+                    it.password = passwordEncoder.encode(request.newPassword)
+                    it.updatedAt = LocalDateTime.now()
+                    userRepository.save(it)
                 }
             }
-            .flatMap {
-                val token: String = authorization.substring(BEARER.length)
-                accessTokenRepository.deleteWhereIdNot(jwtUtil.extractTokenId(token))
-            }
-            .then()
+        }.flatMap {
+            val token: String = authorization.substring(BEARER.length)
+            accessTokenRepository.deleteWhereIdNot(jwtUtil.extractTokenId(token))
+        }.then()
+    }
+
+    fun resetPassword(request: EmailRequest): Mono<Void> {
+        return userRepository.findUserByEmailIgnoreCase(request.email)
+            .switchIfEmpty(Mono.error(EntityNotFoundException()))
+            .flatMap { user ->
+                passwordService.generatePassword()
+                    .flatMap { ninjaPassword ->
+                        user.password = passwordEncoder.encode(ninjaPassword.password)
+                        user.updatedAt = LocalDateTime.now()
+
+                        userRepository.save(user)
+                            .flatMap { Mono.just(mailService.sendPasswordResetMail(user, ninjaPassword.password)) }
+                    }
+            }.then()
+    }
+
+    fun generatePassword(length: Int? = null): Mono<NinjaPasswordResponse> {
+        return passwordService.generatePassword(length)
     }
 
     /**
@@ -134,10 +153,8 @@ class UserDetailsService(
      * @return Моно без результата.
      */
     @Transactional
-    fun changeEmail(request: EmailChangingRequest): Mono<Void> {
-        return getCurrentUser()
-            .flatMap { verifyService.sendChangeEmailLetter(it, request.email) }
-            .then()
+    fun changeEmail(request: EmailRequest): Mono<Void> {
+        return getCurrentUser().flatMap { verifyService.sendChangeEmailLetter(it, request.email) }.then()
     }
 
     /**
@@ -154,25 +171,22 @@ class UserDetailsService(
             return Mono.error(UnauthorizedException())
         }
 
-        return getCurrentUser()
-            .flatMap {
-                when {
-                    it.email != verifyToken.email -> Mono.error(ForbiddenException())
-                    it.confirmationToken != token -> Mono.error(ForbiddenException())
-                    verifyToken.newEmail == null -> Mono.error(UnprocessableException("Новая почта не может быть пустой"))
-                    else -> {
-                        it.verifiedAt = LocalDateTime.now()
-                        it.confirmationToken = null
-                        it.email = verifyToken.newEmail
+        return getCurrentUser().flatMap {
+            when {
+                it.email != verifyToken.email -> Mono.error(ForbiddenException())
+                it.confirmationToken != token -> Mono.error(ForbiddenException())
+                verifyToken.newEmail == null -> Mono.error(UnprocessableException("Новая почта не может быть пустой"))
+                else -> {
+                    it.verifiedAt = LocalDateTime.now()
+                    it.confirmationToken = null
+                    it.email = verifyToken.newEmail
 
-                        userRepository.save(it).thenReturn(it)
-                    }
+                    userRepository.save(it).thenReturn(it)
                 }
             }
-            .flatMap {
-                accessTokenRepository.deleteAllByUserId(it.id!!)
-                    .then(tokenService.getTokenPair(it))
-            }
+        }.flatMap {
+            accessTokenRepository.deleteAllByUserId(it.id!!).then(tokenService.getTokenPair(it))
+        }
     }
 
     /**
@@ -183,11 +197,10 @@ class UserDetailsService(
      */
     @Transactional(readOnly = true)
     override fun findByUsername(username: String?): Mono<UserDetails> {
-        return userRepository.findUserByEmailIgnoreCase(username!!)
-            .onErrorResume { ex ->
-                log.error(ex) { String.format("Ошибка аутентификации - %s\n%s", username, ex.message) }
-                return@onErrorResume Mono.empty()
-            }.cast(UserDetails::class.java)
+        return userRepository.findUserByEmailIgnoreCase(username!!).onErrorResume { ex ->
+            log.error(ex) { String.format("Ошибка аутентификации - %s\n%s", username, ex.message) }
+            return@onErrorResume Mono.empty()
+        }.cast(UserDetails::class.java)
     }
 
     /**
@@ -201,14 +214,12 @@ class UserDetailsService(
         val user = User(authDto.username, passwordEncoder.encode(authDto.password))
         user.confirmationToken = verifyService.getVerifyTokenString(user.email)
 
-        return userRepository.save(user)
-            .flatMap {
-                userRepository.findUserByEmailIgnoreCase(it.email)
-                    .flatMap { savedUser ->
-                        eventPublisher.publishEvent(UserRegisteredEvent(this, savedUser))
-                        tokenService.getTokenPair(savedUser)
-                    }
+        return userRepository.save(user).flatMap {
+            userRepository.findUserByEmailIgnoreCase(it.email).flatMap { savedUser ->
+                eventPublisher.publishEvent(UserRegisteredEvent(this, savedUser))
+                tokenService.getTokenPair(savedUser)
             }
+        }
     }
 
     /**
@@ -230,11 +241,9 @@ class UserDetailsService(
      * @return Моно с JwtResponse
      */
     fun refresh(token: String): Mono<JwtResponse> {
-        return Mono.just(!refreshTokenUtil.isValidToken(token))
-            .onErrorResume { Mono.error(UnauthorizedException()) }
+        return Mono.just(!refreshTokenUtil.isValidToken(token)).onErrorResume { Mono.error(UnauthorizedException()) }
             .flatMap {
-                refreshTokenRepository
-                    .findAccessIdByTokenId(refreshTokenUtil.extractTokenId(token))
+                refreshTokenRepository.findAccessIdByTokenId(refreshTokenUtil.extractTokenId(token))
                     .switchIfEmpty(Mono.error(UnauthorizedException()))
                     .flatMap { accessId -> accessTokenRepository.deleteById(accessId) }
                     .then(tokenService.getTokenPair(token))
@@ -242,10 +251,7 @@ class UserDetailsService(
     }
 
     private fun getCurrentUser(): Mono<User> {
-        return ReactiveSecurityContextHolder.getContext()
-            .map { it.authentication }
-            .map { it.principal }
-            .cast(String::class.java)
-            .flatMap { userRepository.findUserByEmailIgnoreCase(it) }
+        return ReactiveSecurityContextHolder.getContext().map { it.authentication }.map { it.principal }
+            .cast(String::class.java).flatMap { userRepository.findUserByEmailIgnoreCase(it) }
     }
 }

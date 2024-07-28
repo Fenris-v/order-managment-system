@@ -23,6 +23,7 @@ class MailService(
     companion object {
         private const val ENCODING = "UTF-8"
         private const val VERIFY_SUBJECT = "Подтверждение регистрации"
+        private const val PASSWORD_RESET_SUBJECT = "Новый пароль"
         private const val CHANGE_EMAIL_SUBJECT = "Подтверждение изменения email"
         private const val CHANGE_EMAIL_URI = "%s/api/v1/user/email?token=%s"
         private const val VERIFY_URI = "%s/api/v1/user/verify?token=%s"
@@ -45,6 +46,25 @@ class MailService(
         helper.setFrom(email, name)
 
         javaMailSender.send(message)
+    }
+
+    /**
+     * Отправить пользователю письмо с новым паролем.
+     *
+     * @param user Пользователь.
+     * @param password Новый пароль.
+     */
+    @Async("asyncMailExecutor")
+    fun sendPasswordResetMail(user: User, password: String) {
+        send(user.email, PASSWORD_RESET_SUBJECT, getPasswordResetMailHtml(password))
+    }
+
+    private fun getPasswordResetMailHtml(password: String): String {
+        val context = Context()
+        context.setVariable("password", password)
+        context.setVariable("subject", PASSWORD_RESET_SUBJECT)
+
+        return templateEngine.process("password_reset_email", context)
     }
 
     /**

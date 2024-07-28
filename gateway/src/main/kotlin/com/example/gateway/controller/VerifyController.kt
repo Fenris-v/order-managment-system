@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
-@Tag(name = "Пользователь")
+@Tag(name = "Безопасность")
 @RequestMapping("/api/v1/user/verify")
 class VerifyController(private val verifyService: VerifyService) {
     /**

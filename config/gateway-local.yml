@@ -33,11 +33,6 @@ spring:
       httpserver:
         wiretap: true
 
-  data:
-  #    mongodb:
-  #      uri: mongodb://${GATEWAY_DB_USER:root}:${GATEWAY_DB_PASSWORD:example}@${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:27018}/${GATEWAY_DB_NAME:order_management_db}?authSource=admin
-  #      auto-index-creation: true
-
   liquibase:
     enabled: true
     change-log: classpath:/db/db.changelog-master.xml
@@ -65,6 +60,10 @@ app:
     refresh:
       secret: ${REFRESH_SECRET:/ukozASJfFYdplkdQp8sP+Di/7tk00TTIe+SDX3+LP3te7VU3fFcI7Ykgm7AqOF1TVXApKBOchQ212w4Qxuzzg==}
       expiration: 30d
+
+  ninjas:
+    base-url: https://api.api-ninjas.com/v1/
+    api-key: ${NINJAS_API_KEY:3HPpw8Okft+27wVO4pDuow==h4XmOUNKkShZU3if}
 
 springdoc:
   domain: ${APP_DOMAIN:http://localhost:8080}

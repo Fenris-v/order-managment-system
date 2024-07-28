@@ -10,7 +10,7 @@ import com.example.gateway.exception.UnprocessableException
 import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.service.UserDetailsService
-import com.example.gateway.util.JwtUtil
+import com.example.gateway.util.jwt.JwtUtil
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging

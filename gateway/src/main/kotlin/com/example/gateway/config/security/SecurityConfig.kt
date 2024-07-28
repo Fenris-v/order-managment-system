@@ -34,7 +34,10 @@ import org.springframework.web.server.ServerWebExchange
  */
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig(@Value("\${security.excluded}") private val excludedPaths: Array<String>) : WebFluxConfigurer {
+class SecurityConfig(
+    @Value("\${security.excluded.get}") private val excludedGetPaths: Array<String>,
+    @Value("\${security.excluded.post}") private val excludedPostPaths: Array<String>
+) : WebFluxConfigurer {
     companion object {
         const val BEARER: String = "Bearer "
     }
@@ -71,7 +74,9 @@ class SecurityConfig(@Value("\${security.excluded}") private val excludedPaths: 
             .httpBasic { it.authenticationEntryPoint(HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)) }
             .formLogin { it.disable() }
             .authorizeExchange {
-                it.pathMatchers(*excludedPaths).permitAll()
+                it
+                    .pathMatchers(HttpMethod.GET, *excludedGetPaths).permitAll()
+                    .pathMatchers(HttpMethod.POST, *excludedPostPaths).permitAll()
                     .pathMatchers("/actuator/**").permitAll()
                     .anyExchange().authenticated()
             }

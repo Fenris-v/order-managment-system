@@ -16,7 +16,7 @@
         <tr>
             <td style="padding:0;margin:0" valign="top">
                 <th:block
-                        th:insert="~{ fragments/mail_header_fragment :: header('Подтверждение почтового адреса') }"></th:block>
+                        th:insert="~{ fragments/mail_header_fragment :: header(${title}) }"></th:block>
 
                 <div th:replace="${content}"></div>
 

@@ -40,6 +40,10 @@ class VerifyService(private val mailService: MailService, private val userReposi
      */
     @Transactional
     fun verify(token: String): Mono<Void> {
+        if (token.isEmpty()) {
+            return Mono.error(UnauthorizedException())
+        }
+
         val decodedString = String(Base64.getDecoder().decode(token))
         val verifyToken: VerifyToken = Json.decodeFromString<VerifyToken>(decodedString)
         if (VerifyToken.getExpiresDateTime(verifyToken).isBefore(LocalDateTime.now())) {

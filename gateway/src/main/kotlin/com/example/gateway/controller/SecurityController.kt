@@ -1,6 +1,8 @@
 package com.example.gateway.controller
 
+import com.example.gateway.dto.NinjaPasswordResponse
 import com.example.gateway.dto.request.security.AuthDto
+import com.example.gateway.dto.request.security.EmailRequest
 import com.example.gateway.dto.request.security.PasswordChangingRequest
 import com.example.gateway.dto.request.security.RefreshDto
 import com.example.gateway.dto.response.EmptyResponse
@@ -16,10 +18,12 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
@@ -27,7 +31,7 @@ import reactor.core.publisher.Mono
  * Контроллер для обработки запросов, связанных с безопасностью и аутентификацией.
  */
 @RestController
-@Tag(name = "Пользователь")
+@Tag(name = "Безопасность")
 @RequestMapping("/api/v1/user")
 class SecurityController(private val userService: UserDetailsService) {
     /**
@@ -170,6 +174,51 @@ class SecurityController(private val userService: UserDetailsService) {
             .then(Mono.just(ResponseEntity.ok().body(EmptyResponse("Пароль изменён"))))
     }
 
-    // TODO: сброс пароля через сервис https://api-ninjas.com/profile
-    // TODO: эндпоинт генератор паролей
+    /**
+     * Сброс пароля пользователя.
+     *
+     * @return ResponseEntity с пустым телом и кодом ответа 200, если успешно.
+     */
+    @PostMapping("/password/reset")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Пароль изменен и отправлен на почту",
+                content = [
+                    Content(mediaType = "application/json", schema = Schema(implementation = EmptyResponse::class))
+                ]
+            )
+        ]
+    )
+    @Operation(summary = "Изменить пароль", description = "Изменить пароль пользователя.")
+    fun resetPassword(@RequestBody @Valid request: EmailRequest): Mono<ResponseEntity<EmptyResponse>> {
+        return userService.resetPassword(request)
+            .then(Mono.just(ResponseEntity.ok().body(EmptyResponse("Новый пароль отправлен на почту"))))
+    }
+
+    /**
+     * Сгенерировать пароль.
+     *
+     * @return Mono с объектом NinjaPasswordResponse.
+     */
+    @GetMapping("/password")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Пароль сгенерирован",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = NinjaPasswordResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
+    @Operation(summary = "Изменить пароль", description = "Изменить пароль пользователя.")
+    fun generatePassword(@RequestParam length: Int? = null): Mono<NinjaPasswordResponse> {
+        return userService.generatePassword(length)
+    }
 }

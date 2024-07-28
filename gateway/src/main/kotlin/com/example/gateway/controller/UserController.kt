@@ -1,6 +1,6 @@
 package com.example.gateway.controller
 
-import com.example.gateway.dto.request.security.EmailChangingRequest
+import com.example.gateway.dto.request.security.EmailRequest
 import com.example.gateway.dto.request.security.UserUpdatingRequest
 import com.example.gateway.dto.response.EmptyResponse
 import com.example.gateway.dto.response.FullUserDto
@@ -123,7 +123,7 @@ class UserController(private val userService: UserDetailsService) {
         ]
     )
     @Operation(summary = "Изменить email пользователя", description = "Изменить email текущего пользователя.")
-    fun changeEmail(@RequestBody request: EmailChangingRequest): Mono<ResponseEntity<EmptyResponse>> {
+    fun changeEmail(@RequestBody request: EmailRequest): Mono<ResponseEntity<EmptyResponse>> {
         return userService.changeEmail(request)
             .then(Mono.just(ResponseEntity.accepted().body(EmptyResponse("Письмо для смены email отправлено"))))
     }
