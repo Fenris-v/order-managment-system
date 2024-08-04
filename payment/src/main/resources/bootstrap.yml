@@ -1,1 +1,24 @@
+server:
+  port: 8001
 
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: payment
+
+  profiles:
+    active: local, local-monitoring
+
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        enabled: true
+        service-id: discovery
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka

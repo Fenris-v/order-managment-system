@@ -1,22 +1,32 @@
-package com.example.gateway.model
+package com.example.payment.model
 
+import com.example.payment.enums.UPaymentStatus
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.UUID
 
 /**
- * Класс представляет сущность токена обновления.
+ * Класс представляет сущность платежа.
  */
-@Table(name = "refresh_tokens")
-data class RefreshToken(
-    var id: UUID? = null,
-    var userId: Long? = null,
-    var accessId: UUID? = null,
-    var expireAt: LocalDateTime? = null,
+@Table(name = "transactions")
+data class Transaction(
+    @Id
+    @JsonProperty("id")
+    val id: Long? = null,
+    val userId: Long? = null,
+    val amount: Double? = null,
+    @Enumerated(EnumType.STRING)
+    var status: UPaymentStatus? = null,
+    var paymentId: UUID? = null,
+    val idempotenceKey: UUID? = null,
 
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)

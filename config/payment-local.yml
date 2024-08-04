@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: payment
+
+  boot:
+    admin:
+      client:
+        url: ${SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${ADMIN_PORT:8999}
+        instance:
+          service-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}
+          health-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator/health
+          management-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/db.changelog-master.xml
+    url: jdbc:postgresql://${PAYMENT_DB_HOST:localhost}:${PAYMENT_DB_PORT:6431}/${PAYMENT_DB_NAME:payment}?stringtype=unspecified
+    user: ${PAYMENT_DB_USER:user}
+    password: ${PAYMENT_DB_PASSWORD:secret}
+    driver-class-name: org.postgresql.Driver
+
+  r2dbc:
+    url: r2dbc:postgresql://${PAYMENT_DB_HOST:localhost}:${PAYMENT_DB_PORT:6431}/${PAYMENT_DB_NAME:payment}?stringtype=unspecified
+    username: ${PAYMENT_DB_USER:user}
+    password: ${PAYMENT_DB_PASSWORD:secret}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    topic:
+    consumer:
+      group-id: payment
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
+
+springdoc:
+  api-docs:
+    path: /api/v1/payment/v3/api-docs
+    enabled: true
+
+app:
+  config:
+    uMoneyKey: ${UMONEY_SECRET_KEY:key}
+    uMoneyShopId: ${UMONEY_SHOP_ID:id}
+    uMoneyPayments: https://api.yookassa.ru/v3/payments/
+    vatCode: 1

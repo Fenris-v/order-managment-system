@@ -46,6 +46,7 @@ private val log: KLogger = KotlinLogging.logger {}
 class UserDetailsService(
     private val jwtUtil: JwtUtil,
     private val userMapper: UserMapper,
+    private val mailService: MailService,
     private val tokenService: TokenService,
     private val verifyService: VerifyService,
     private val userRepository: UserRepository,
@@ -54,8 +55,7 @@ class UserDetailsService(
     private val passwordService: NinjasPasswordService,
     private val eventPublisher: ApplicationEventPublisher,
     private val accessTokenRepository: AccessTokenRepository,
-    private val refreshTokenRepository: RefreshTokenRepository,
-    private val mailService: MailService
+    private val refreshTokenRepository: RefreshTokenRepository
 ) : ReactiveUserDetailsService {
     /**
      * Получение пользователя по id.
@@ -198,7 +198,7 @@ class UserDetailsService(
     @Transactional(readOnly = true)
     override fun findByUsername(username: String?): Mono<UserDetails> {
         return userRepository.findUserByEmailIgnoreCase(username!!).onErrorResume { ex ->
-            log.error(ex) { String.format("Ошибка аутентификации - %s\n%s", username, ex.message) }
+            log.error(ex) { "Ошибка аутентификации - $username\n${ex.message}" }
             return@onErrorResume Mono.empty()
         }.cast(UserDetails::class.java)
     }
