@@ -12,16 +12,16 @@ import java.util.UUID
  * Класс представляет сущность ответа от API UMoney.
  */
 data class UMoneyResponse(
-    var id: UUID,
-    @JsonDeserialize(using = UPaymentStatusDeserializer::class) val status: UPaymentStatus,
-    val amount: Amount,
-    val description: String,
-    val recipient: Recipient,
+    @JsonProperty("id") var id: UUID,
+    @JsonProperty("status") @JsonDeserialize(using = UPaymentStatusDeserializer::class) val status: UPaymentStatus,
+    @JsonProperty("amount") val amount: Amount,
+    @JsonProperty("description") val description: String,
+    @JsonProperty("recipient") val recipient: Recipient,
     @JsonProperty("created_at") val createdAt: LocalDateTime,
-    val confirmation: Confirmation?,
-    val paid: Boolean,
-    val refundable: Boolean,
-    val metadata: Map<String, String>
+    @JsonProperty("confirmation") val confirmation: Confirmation?,
+    @JsonProperty("paid") val paid: Boolean,
+    @JsonProperty("refundable") val refundable: Boolean,
+    @JsonProperty("metadata") val metadata: Map<String, String>
 )
 
 /**
@@ -36,7 +36,7 @@ data class Recipient(
  * Класс представляет сущность подтверждения платежа.
  */
 data class Confirmation(
-    val type: String,
+    @JsonProperty("type") val type: String,
     @JsonProperty("return_url") val returnUrl: String? = null,
     @JsonProperty("confirmation_url") val confirmationUrl: String? = null
 )

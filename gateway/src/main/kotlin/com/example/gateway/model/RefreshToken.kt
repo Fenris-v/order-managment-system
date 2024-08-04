@@ -14,7 +14,6 @@ import java.util.UUID
 @Table(name = "refresh_tokens")
 data class RefreshToken(
     var id: UUID? = null,
-    var userId: Long? = null,
     var accessId: UUID? = null,
     var expireAt: LocalDateTime? = null,
 

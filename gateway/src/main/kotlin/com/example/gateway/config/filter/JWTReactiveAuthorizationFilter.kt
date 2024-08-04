@@ -2,15 +2,15 @@ package com.example.gateway.config.filter
 
 import com.example.gateway.config.security.SecurityConfig.Companion.BEARER
 import com.example.gateway.config.security.handler.AuthorizationExceptionHandler
-import com.example.gateway.dto.response.ExceptionDto
-import com.example.gateway.exception.EntityNotFoundException
-import com.example.gateway.exception.ForbiddenException
-import com.example.gateway.exception.JsonParseException
-import com.example.gateway.exception.UnprocessableException
 import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
 import com.example.gateway.service.UserDetailsService
 import com.example.gateway.util.jwt.JwtUtil
+import com.example.starter.utils.dto.response.ExceptionDto
+import com.example.starter.utils.exception.EntityNotFoundException
+import com.example.starter.utils.exception.ForbiddenException
+import com.example.starter.utils.exception.JsonParseException
+import com.example.starter.utils.exception.UnprocessableException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging

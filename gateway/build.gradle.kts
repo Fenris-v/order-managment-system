@@ -23,6 +23,9 @@ val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExt
 println("Library aliases: ${versionCatalog.bundleAliases}")
 
 dependencies {
+    implementation(project(":starter-utils")) // TODO: заменить на nexus
+//    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
+
     versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
 
     versionCatalog.findLibrary("serialization").ifPresent { implementation(it) }

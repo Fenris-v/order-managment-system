@@ -47,14 +47,24 @@ eureka:
     serviceUrl:
       defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
 
-springdoc:
-  api-docs:
-    path: /api/v1/payment/v3/api-docs
-    enabled: true
-
 app:
   config:
-    uMoneyKey: ${UMONEY_SECRET_KEY:key}
     uMoneyShopId: ${UMONEY_SHOP_ID:id}
+    uMoneyKey: ${UMONEY_SECRET_KEY:key}
+    uMoneyCallbackUrl: http://localhost:8080/some-page
     uMoneyPayments: https://api.yookassa.ru/v3/payments/
     vatCode: 1
+
+springdoc:
+  domain: ${APP_DOMAIN:http://localhost:8080}
+  prefix: /api/v1/payment
+  swagger-ui:
+    path: /swagger
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+
+starter:
+  utils:
+    jwt: true
+    web-client: true

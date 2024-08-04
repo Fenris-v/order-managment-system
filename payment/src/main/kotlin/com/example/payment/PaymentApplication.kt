@@ -6,7 +6,7 @@ import org.springframework.boot.runApplication
 /**
  * Основной класс микросервиса Payment.
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = ["com.example.payment", "com.example.starter.utils"])
 class PaymentApplication
 
 /**

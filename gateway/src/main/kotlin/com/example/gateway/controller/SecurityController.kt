@@ -6,9 +6,9 @@ import com.example.gateway.dto.request.security.EmailRequest
 import com.example.gateway.dto.request.security.PasswordChangingRequest
 import com.example.gateway.dto.request.security.RefreshDto
 import com.example.gateway.dto.response.EmptyResponse
-import com.example.gateway.dto.response.ExceptionDto
 import com.example.gateway.dto.response.JwtResponse
 import com.example.gateway.service.UserDetailsService
+import com.example.starter.utils.dto.response.ExceptionDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

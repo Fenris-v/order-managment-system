@@ -3,13 +3,13 @@ package com.example.gateway.service
 import com.example.gateway.dto.VerifyToken
 import com.example.gateway.dto.request.security.VerifyDto
 import com.example.gateway.dto.response.JwtResponse
-import com.example.gateway.exception.BadRequestException
-import com.example.gateway.exception.ForbiddenException
 import com.example.gateway.exception.ThrottleException
 import com.example.gateway.exception.UnauthorizedException
 import com.example.gateway.model.User
 import com.example.gateway.repository.UserRepository
 import com.example.gateway.service.mail.MailService
+import com.example.starter.utils.exception.BadRequestException
+import com.example.starter.utils.exception.ForbiddenException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Service
@@ -90,7 +90,7 @@ class VerifyService(private val mailService: MailService, private val userReposi
             .flatMap {
                 when {
                     it !is User -> Mono.error<JwtResponse>(BadRequestException())
-                    it.verifiedAt != null -> Mono.error<Void>(ForbiddenException())
+                    it.verifiedAt != null -> Mono.error<Void>(ForbiddenException("Пользователь ${it.email} уже подтверждён"))
                     it.confirmationToken != null -> handleWhenConfirmationTokenExist(it)
                     else -> sendVerifyEmail(it)
                 }

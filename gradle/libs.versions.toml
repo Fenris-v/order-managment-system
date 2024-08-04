@@ -28,7 +28,11 @@ koltinPluginVersion = "1.8.22"
 
 testContainersVersion = "1.19.7"
 
+starterUtilsVersion = "0.0.1-SNAPSHOT"
+
 [libraries]
+starterUtils = { module = "com.example.starter.utils:starter-utils", version.ref = "starterUtilsVersion" }
+
 springWebflux = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "springBootVersion" }
 springConfig = { module = "org.springframework.cloud:spring-cloud-starter-config", version.ref = "springCloudVersion" }
 springBootstrap = { module = "org.springframework.cloud:spring-cloud-starter-bootstrap", version.ref = "springCloudVersion" }

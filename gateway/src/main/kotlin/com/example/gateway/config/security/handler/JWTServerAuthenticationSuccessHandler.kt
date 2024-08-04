@@ -1,8 +1,8 @@
 package com.example.gateway.config.security.handler
 
-import com.example.gateway.exception.BadRequestException
 import com.example.gateway.model.User
 import com.example.gateway.service.TokenService
+import com.example.starter.utils.exception.BadRequestException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging

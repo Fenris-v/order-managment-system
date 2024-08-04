@@ -3,6 +3,7 @@ package com.example.payment.processor
 import com.example.payment.enums.UPaymentStatus
 import com.example.payment.event.PaymentEvent
 import com.example.payment.service.UMoneyPaymentService
+import com.example.starter.utils.exception.EntityNotFoundException
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.annotation.PostConstruct
@@ -16,23 +17,40 @@ import java.util.concurrent.Executors
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Класс для обработки событий платежей.
+ * <p>
+ * Этот процессор принимает события платежей и выполняет проверку статуса платежа в UMoney. При обновлении статуса
+ * запускает обновление транзакции.
+ */
 @Component
-class PaymentProcessor(private val UMoneyPaymentService: UMoneyPaymentService) {
+class PaymentProcessor(private val uMoneyPaymentService: UMoneyPaymentService) {
     private var running: Boolean = true
     private val delayQueue: DelayQueue<PaymentEvent> = DelayQueue()
     private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
+    /**
+     * Инициализация процессора
+     */
     @PostConstruct
     fun init() {
         executorService.submit(this::processTasks)
     }
 
+    /**
+     * Остановка процессора
+     */
     @PreDestroy
     fun shutdown() {
         running = false
         executorService.shutdown()
     }
 
+    /**
+     * Метод добавляет задачу в очередь
+     *
+     * @param event Событие платежа
+     */
     fun submitTask(event: PaymentEvent) {
         delayQueue.offer(event)
         log.info { "Задача на проверку статуса транзакции добавлена в очередь" }
@@ -53,12 +71,13 @@ class PaymentProcessor(private val UMoneyPaymentService: UMoneyPaymentService) {
         return Runnable {
             log.info { "Проверка статусов транзакций" }
 
-            UMoneyPaymentService.getTransactionStatus(event.paymentId)
+            uMoneyPaymentService.getTransactionStatus(event.paymentId)
+                .switchIfEmpty(Mono.error(EntityNotFoundException()))
                 .flatMap { response ->
                     log.info { "Актуальный статус транзакции ${response.id}: ${response.status}" }
                     when (response.status) {
-                        UPaymentStatus.CANCELED -> UMoneyPaymentService.cancelTransaction(event.paymentId)
-                        UPaymentStatus.SUCCEEDED -> UMoneyPaymentService.processSucceedTransaction(response.id)
+                        UPaymentStatus.CANCELED -> uMoneyPaymentService.cancelTransaction(event.paymentId)
+                        UPaymentStatus.SUCCEEDED -> uMoneyPaymentService.processSucceedTransaction(response.id)
                         UPaymentStatus.PENDING, UPaymentStatus.WAITING_FOR_CAPTURE -> {
                             return@flatMap catchPendingStatus(event)
                         }
@@ -73,7 +92,7 @@ class PaymentProcessor(private val UMoneyPaymentService: UMoneyPaymentService) {
             submitTask(PaymentEvent(event.paymentId, event.delaySeconds, event.expiryAt))
             return Mono.empty()
         } else {
-            return UMoneyPaymentService.cancelTransaction(event.paymentId)
+            return uMoneyPaymentService.cancelTransaction(event.paymentId)
         }
     }
 }

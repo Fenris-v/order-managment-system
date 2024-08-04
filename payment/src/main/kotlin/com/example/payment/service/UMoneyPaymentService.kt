@@ -1,7 +1,9 @@
 package com.example.payment.service
 
 import com.example.payment.dto.request.PaymentRequest
+import com.example.payment.dto.response.HistoryResponse
 import com.example.payment.dto.response.PaymentResponse
+import com.example.payment.dto.response.TransactionResponse
 import com.example.payment.dto.umoney.Amount
 import com.example.payment.dto.umoney.request.Confirmation
 import com.example.payment.dto.umoney.request.Customer
@@ -16,6 +18,7 @@ import com.example.payment.enums.UPaymentStatus
 import com.example.payment.event.PaymentEvent
 import com.example.payment.model.Transaction
 import com.example.payment.repository.TransactionRepository
+import com.example.starter.utils.utils.jwt.ClaimsUtils
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -41,8 +44,11 @@ class UMoneyPaymentService(
     @Value("\${app.config.uMoneyKey}") private val apiKey: String,
     @Value("\${app.config.uMoneyShopId}") private val shopId: String,
     @Value("\${app.config.uMoneyPayments}") private val paymentUrl: String,
+    @Value("\${app.config.uMoneyCallbackUrl}") private val callbackUrl: String,
     private val client: WebClient,
+    private val claimsUtils: ClaimsUtils,
     private val userService: UserService,
+    private val userBalanceService: UserBalanceService,
     private val eventPublisher: ApplicationEventPublisher,
     private val transactionRepository: TransactionRepository
 ) {
@@ -50,7 +56,24 @@ class UMoneyPaymentService(
         private const val PRODUCT_DESCRIPTION = "Пополнение баланса"
         private const val IDEMPOTENCY_KEY_HEADER = "Idempotence-Key"
         private const val DESCRIPTION = "Пополнение баланса пользователя"
-        private const val RETURN_URL = "http://localhost:8001/payment/confirm"
+    }
+
+    /**
+     * Запрашивает историю платежей пользователя.
+     *
+     * @param authorization токен пользователя
+     * @param page текущая страница
+     * @param size размер страницы
+     * @return история платежей
+     */
+    fun getHistory(authorization: String, page: Int, size: Int): Mono<HistoryResponse> {
+        return Mono.just(claimsUtils.extractAllClaims(authorization))
+            .flatMap { user ->
+                transactionRepository.getTransactionHistory(user.id, size, page * size)
+                    .flatMap { Mono.just(TransactionResponse(it.amount!!, it.status!!, it.createdAt, it.updatedAt)) }
+                    .collectList()
+                    .map { HistoryResponse(it) }
+            }
     }
 
     /**
@@ -89,8 +112,7 @@ class UMoneyPaymentService(
             .flatMap { transaction ->
                 transaction.status = UPaymentStatus.SUCCEEDED
                 transactionRepository.save(transaction)
-                    .zipWith(Mono.just(log.info { "Дописать логику пополнения баланса на ${transaction.amount}" })) // TODO: Дописать логику пополнения баланса
-                    .then()
+                    .then(userBalanceService.topUpBalance(transaction.userId!!, transaction.amount!!))
             }
     }
 
@@ -100,8 +122,8 @@ class UMoneyPaymentService(
      * @param request данные для создания платежа
      */
     @Transactional
-    fun getPaymentLink(request: PaymentRequest): Mono<PaymentResponse> {
-        return userService.getUser()
+    fun getPaymentLink(authorization: String, request: PaymentRequest): Mono<PaymentResponse> {
+        return userService.getUser(authorization)
             .flatMap { user ->
                 val transaction: Transaction = createTransaction(request, user)
                 executeUMoneyRequest(request, transaction, user)
@@ -158,7 +180,7 @@ class UMoneyPaymentService(
                 listOf(UMoneyProduct(PRODUCT_DESCRIPTION, Amount(request.amount, CurrencyEnum.RUB), vatCode, 1))
             ),
             PaymentMethodData(PaymentTypeEnum.BANK_CARD.value),
-            Confirmation(RETURN_URL),
+            Confirmation(callbackUrl),
             DESCRIPTION
         )
 }

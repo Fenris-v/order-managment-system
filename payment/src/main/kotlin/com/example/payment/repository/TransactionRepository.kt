@@ -34,4 +34,14 @@ interface TransactionRepository : ReactiveCrudRepository<Transaction, Long> {
      * @param status статус платежа.
      */
     fun findTransactionsByStatus(status: UPaymentStatus): Flux<Transaction>
+
+    /**
+     * Находит платежи пользователя.
+     *
+     * @param userId идентификатор пользователя.
+     * @param size количество платежей.
+     * @param offset смещение.
+     */
+    @Query("SELECT * FROM transactions WHERE user_id = :userId ORDER BY created_at DESC LIMIT :size OFFSET :offset")
+    fun getTransactionHistory(userId: Long, size: Int, offset: Int): Flux<Transaction>
 }

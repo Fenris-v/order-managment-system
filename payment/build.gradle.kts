@@ -21,13 +21,15 @@ repositories {
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2") // todo
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2") // todo
+    implementation(project(":starter-utils")) // TODO: заменить на nexus
+//    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("spring").ifPresent { implementation(it) }
     versionCatalog.findBundle("postgres").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springValidation").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springJpa").ifPresent { implementation(it) }
+
+    versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("logs").ifPresent { implementation(it) }
     versionCatalog.findLibrary("kotlinReflect").ifPresent { implementation(it) }

@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono
 // TODO
 @Service
 class UserService {
-    fun getUser(): Mono<User> = Mono.just(User())// todo
+    fun getUser(authorization: String): Mono<User> = Mono.just(User())// todo
 }
 
 data class User(
