@@ -77,3 +77,4 @@ springdoc:
 starter:
   utils:
     web-client: true
+    jwt: true
