@@ -1,4 +1,4 @@
-package com.example.gateway.grpc.handler
+package com.example.gateway.grpc.server.handler
 
 import com.example.starter.utils.exception.EntityNotFoundException
 import io.grpc.Status

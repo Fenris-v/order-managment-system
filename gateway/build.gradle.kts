@@ -24,16 +24,8 @@ repositories {
 }
 
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
-println("Library aliases: ${versionCatalog.bundleAliases}")
 
 dependencies {
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
-
-    implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
-    implementation("io.grpc:grpc-all:1.65.1")
-
-    implementation("com.google.protobuf:protobuf-java:4.27.3")
-
     implementation(project(":starter-utils")) // TODO: заменить на nexus
 //    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
 
@@ -45,6 +37,8 @@ dependencies {
     versionCatalog.findBundle("mailing").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("spring").ifPresent { implementation(it) }
+    versionCatalog.findBundle("grpc").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("grpcServer").ifPresent { implementation(it) }
     versionCatalog.findBundle("jwt").ifPresent { implementation(it) }
 
     versionCatalog.findLibrary("springSecurity").ifPresent { implementation(it) }

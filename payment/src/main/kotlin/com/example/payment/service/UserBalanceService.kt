@@ -2,7 +2,7 @@ package com.example.payment.service
 
 import com.example.payment.dto.response.UserBalanceResponse
 import com.example.payment.repository.UserBalanceRepository
-import com.example.starter.utils.utils.jwt.ClaimsUtils
+import com.example.starter.utils.utils.jwt.JwtUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 @Service
 class UserBalanceService(
     private val userBalanceRepository: UserBalanceRepository,
-    private val claimsUtils: ClaimsUtils
+    private val jwtUtils: JwtUtils
 ) {
     /**
      * Добавляет деньги на баланс пользователя.
@@ -37,7 +37,7 @@ class UserBalanceService(
      * @return Mono<UserBalanceResponse>
      */
     fun getBalance(authorization: String): Mono<UserBalanceResponse> {
-        return Mono.just(claimsUtils.extractAllClaims(authorization))
+        return Mono.just(jwtUtils.extractAllClaims(authorization))
             .flatMap { user ->
                 userBalanceRepository.findUserBalanceByUserId(user.id)
                     .map { UserBalanceResponse(it.amount ?: 0.0, it.updatedAt) }

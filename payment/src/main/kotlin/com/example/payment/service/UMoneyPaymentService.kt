@@ -16,9 +16,11 @@ import com.example.payment.enums.CurrencyEnum
 import com.example.payment.enums.PaymentTypeEnum
 import com.example.payment.enums.UPaymentStatus
 import com.example.payment.event.PaymentEvent
+import com.example.payment.grpc.client.service.AuthService
 import com.example.payment.model.Transaction
 import com.example.payment.repository.TransactionRepository
-import com.example.starter.utils.utils.jwt.ClaimsUtils
+import com.example.security.UserResponse
+import com.example.starter.utils.utils.jwt.JwtUtils
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -46,8 +48,8 @@ class UMoneyPaymentService(
     @Value("\${app.config.uMoneyPayments}") private val paymentUrl: String,
     @Value("\${app.config.uMoneyCallbackUrl}") private val callbackUrl: String,
     private val client: WebClient,
-    private val claimsUtils: ClaimsUtils,
-    private val userService: UserService,
+    private val jwtUtils: JwtUtils,
+    private val authService: AuthService,
     private val userBalanceService: UserBalanceService,
     private val eventPublisher: ApplicationEventPublisher,
     private val transactionRepository: TransactionRepository
@@ -67,7 +69,7 @@ class UMoneyPaymentService(
      * @return история платежей
      */
     fun getHistory(authorization: String, page: Int, size: Int): Mono<HistoryResponse> {
-        return Mono.just(claimsUtils.extractAllClaims(authorization))
+        return Mono.just(jwtUtils.extractAllClaims(authorization))
             .flatMap { user ->
                 transactionRepository.getTransactionHistory(user.id, size, page * size)
                     .flatMap { Mono.just(TransactionResponse(it.amount!!, it.status!!, it.createdAt, it.updatedAt)) }
@@ -123,7 +125,7 @@ class UMoneyPaymentService(
      */
     @Transactional
     fun getPaymentLink(authorization: String, request: PaymentRequest): Mono<PaymentResponse> {
-        return userService.getUser(authorization)
+        return Mono.just(authService.getUser(jwtUtils.cutBearer(authorization)))
             .flatMap { user ->
                 val transaction: Transaction = createTransaction(request, user)
                 executeUMoneyRequest(request, transaction, user)
@@ -142,7 +144,7 @@ class UMoneyPaymentService(
             }
     }
 
-    private fun createTransaction(request: PaymentRequest, user: User): Transaction {
+    private fun createTransaction(request: PaymentRequest, user: UserResponse): Transaction {
         log.debug { "Создание транзакции" }
         return Transaction(
             userId = user.id,
@@ -155,7 +157,7 @@ class UMoneyPaymentService(
     private fun executeUMoneyRequest(
         request: PaymentRequest,
         transaction: Transaction,
-        user: User
+        user: UserResponse
     ): Mono<UMoneyResponse> {
         log.debug { "Запрос на создание платежа" }
 
@@ -172,7 +174,7 @@ class UMoneyPaymentService(
             .bodyToMono(UMoneyResponse::class.java)
     }
 
-    private fun getUMoneyPaymentRequest(request: PaymentRequest, user: User): UMoneyPaymentRequest =
+    private fun getUMoneyPaymentRequest(request: PaymentRequest, user: UserResponse): UMoneyPaymentRequest =
         UMoneyPaymentRequest(
             Amount(request.amount),
             Receipt(

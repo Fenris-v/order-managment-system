@@ -8,9 +8,19 @@ import java.util.Base64
 /**
  * Класс-утилита для работы с JWT.
  */
-class ClaimsUtils(private val objectMapper: ObjectMapper) {
+class JwtUtils(private val objectMapper: ObjectMapper) {
     companion object {
         const val BEARER: String = "Bearer "
+    }
+
+    /**
+     * Обрезает Bearer из токена.
+     *
+     * @param token JWT токен
+     * @return Токен без Bearer
+     */
+    fun cutBearer(token: String): String {
+        return token.substring(BEARER.length)
     }
 
     /**
@@ -20,7 +30,7 @@ class ClaimsUtils(private val objectMapper: ObjectMapper) {
      * @return Полезная нагрузка
      */
     fun extractAllClaims(token: String): JwtUserDto {
-        val payload = String(Base64.getDecoder().decode(token.substring(BEARER.length).split('.')[1]))
+        val payload = String(Base64.getDecoder().decode(cutBearer(token).split('.')[1]))
         return objectMapper.readValue(payload, PayloadData::class.java).user
     }
 }

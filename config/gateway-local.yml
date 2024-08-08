@@ -1,3 +1,7 @@
+grpc:
+  server:
+    port: ${SECURITY_GRPC_PORT:9001}
+
 spring:
   mail:
     host: ${SMTP_HOST:smtp.gmail.com}
