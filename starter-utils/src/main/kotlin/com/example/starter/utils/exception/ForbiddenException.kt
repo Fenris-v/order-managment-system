@@ -1,6 +1,6 @@
-package com.example.gateway.exception
+package com.example.starter.utils.exception
 
 /**
  * Исключение, представляющее ситуацию, когда доступ к ресурсу запрещен.
  */
-class ForbiddenException : RuntimeException()
+class ForbiddenException(message: String? = null) : RuntimeException(message)

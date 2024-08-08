@@ -17,6 +17,7 @@ class NinjasPasswordService(
 ) {
     companion object {
         private const val PASSWORD_LENGTH = 16
+        private const val GENERATOR_API_URL = "%s%s?length=%d"
         private const val PASSWORD_GENERATOR_URI = "passwordgenerator"
     }
 
@@ -28,7 +29,7 @@ class NinjasPasswordService(
      */
     fun generatePassword(length: Int? = null): Mono<NinjaPasswordResponse> {
         return httpUtil.get(
-            String.format("%s%s?length=%d", baseUrl, PASSWORD_GENERATOR_URI, length ?: PASSWORD_LENGTH),
+            String.format(GENERATOR_API_URL, baseUrl, PASSWORD_GENERATOR_URI, length ?: PASSWORD_LENGTH),
             apiKey,
             NinjaPasswordResponse::class.java
         )

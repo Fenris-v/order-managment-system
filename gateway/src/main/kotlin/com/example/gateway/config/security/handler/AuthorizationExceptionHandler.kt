@@ -1,7 +1,7 @@
 package com.example.gateway.config.security.handler
 
-import com.example.gateway.dto.response.ExceptionDto
-import com.example.gateway.exception.JsonParseException
+import com.example.starter.utils.dto.response.ExceptionDto
+import com.example.starter.utils.exception.JsonParseException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging

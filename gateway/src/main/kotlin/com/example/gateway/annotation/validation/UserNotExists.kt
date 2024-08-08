@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 @MustBeDocumented
 @Constraint(validatedBy = [UserNotExistsValidator::class])
 annotation class UserNotExists(
-    val message: String = "User with same email already exists",
+    val message: String = "Пользователь с таким email уже существует.",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<Any>> = []
 )

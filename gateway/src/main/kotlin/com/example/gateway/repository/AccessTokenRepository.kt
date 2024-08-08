@@ -1,7 +1,6 @@
 package com.example.gateway.repository
 
 import com.example.gateway.model.AccessToken
-import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Mono
@@ -26,7 +25,6 @@ interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
      * @param id Идентификатор токена, который необходимо удалить.
      * @return Mono, завершающийся при успешном удалении токена.
      */
-    @Modifying
     @Query(value = "DELETE FROM access_tokens WHERE id = :id")
     override fun deleteById(id: UUID): Mono<Void>
 
@@ -36,7 +34,6 @@ interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
      * @param id Идентификатор токена, который необходимо удалить.
      * @return Mono, завершающийся при успешном удалении токена.
      */
-    @Modifying
     @Query(value = "DELETE FROM access_tokens WHERE id <> :id")
     fun deleteWhereIdNot(id: UUID): Mono<Void>
 
@@ -46,6 +43,5 @@ interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
      * @param userId Идентификатор пользователя, которому необходимо удалить все токены.
      * @return Mono, завершающийся при успешном удалении токена.
      */
-    @Modifying
     fun deleteAllByUserId(userId: Long): Mono<Void>
 }

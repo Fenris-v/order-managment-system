@@ -3,6 +3,13 @@ springBootVersion = "3.1.5"
 springCloudVersion = "4.0.3"
 springGatewayVersion = "4.0.6"
 
+starterUtilsVersion = "0.0.1-SNAPSHOT"
+
+grpcStarterVersion = "3.1.0.RELEASE"
+protobufVersion = "4.27.3"
+grpcAllVersion = "1.65.1"
+javaxVersion = "1.3.2"
+
 caffeineVersion = "3.1.5"
 jjwtVersion = "0.12.3"
 
@@ -34,6 +41,14 @@ springConfig = { module = "org.springframework.cloud:spring-cloud-starter-config
 springBootstrap = { module = "org.springframework.cloud:spring-cloud-starter-bootstrap", version.ref = "springCloudVersion" }
 springEureka = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client", version.ref = "springCloudVersion" }
 springConfigClient = { module = "org.springframework.cloud:spring-cloud-config-client", version.ref = "springCloudVersion" }
+
+starterUtils = { module = "com.example.starter.utils:starter-utils", version.ref = "starterUtilsVersion" }
+
+javax = { module = "javax.annotation:javax.annotation-api", version.ref = "javaxVersion" }
+grpc = { module = "io.grpc:grpc-all", version.ref = "grpcAllVersion" }
+protobuf = { module = "com.google.protobuf:protobuf-java", version.ref = "protobufVersion" }
+grpcServer = { module = "net.devh:grpc-server-spring-boot-starter", version.ref = "grpcStarterVersion" }
+grpcClient = { module = "net.devh:grpc-client-spring-boot-starter", version.ref = "grpcStarterVersion" }
 
 springConfigServer = { module = "org.springframework.cloud:spring-cloud-config-server", version.ref = "springCloudVersion" }
 springEurekaServer = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server", version.ref = "springCloudVersion" }
@@ -82,6 +97,7 @@ testContainersPostgres = { module = "org.testcontainers:postgresql", version.ref
 
 [bundles]
 spring = ["springWebflux", "springConfig", "springBootstrap", "springEureka", "springConfigClient"]
+grpc = ["javax", "grpc", "protobuf"]
 jwt = ["jjwtApi", "jjwtImpl", "jjwtJackson"]
 postgres = ["postgresDriver", "r2dbc", "liquibase", "jdbc", "springR2dbc"]
 mailing = ["mailing", "thymeleaf"]

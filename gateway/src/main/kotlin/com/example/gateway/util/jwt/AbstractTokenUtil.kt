@@ -3,6 +3,7 @@ package com.example.gateway.util.jwt
 import com.example.gateway.exception.UnauthorizedException
 import com.example.gateway.model.User
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
@@ -24,7 +25,7 @@ abstract class AbstractTokenUtil : TokenUtil {
      *
      * @return Время жизни токена
      */
-    protected abstract fun getExpiration(): Duration
+    abstract fun getExpiration(): Duration
 
     /**
      * Получение секретного ключа для подписи токена.
@@ -112,10 +113,14 @@ abstract class AbstractTokenUtil : TokenUtil {
     }
 
     private fun <T> extractClaim(token: String, @NonNull claimsResolver: Function<Claims, T>): T {
-        return claimsResolver.apply(extractAllClaims(token))
+        try {
+            return claimsResolver.apply(extractAllClaims(token))
+        } catch (ex: JwtException) {
+            throw UnauthorizedException()
+        }
     }
 
-    fun extractAllClaims(token: String): Claims {
+    private fun extractAllClaims(token: String): Claims {
         return Jwts
             .parser()
             .verifyWith(getSignInKey())

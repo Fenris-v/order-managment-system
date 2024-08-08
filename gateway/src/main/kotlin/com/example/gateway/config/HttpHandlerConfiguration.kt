@@ -20,9 +20,9 @@ class HttpHandlerConfiguration {
      * @return Обработчик HTTP-запросов.
      */
     @Bean
-    fun httpHandler(context: ApplicationContext?): HttpHandler {
+    fun httpHandler(context: ApplicationContext): HttpHandler {
         return WebHttpHandlerBuilder
-            .applicationContext(context!!)
+            .applicationContext(context)
             .filters { filters: MutableList<WebFilter?> ->
                 filters.removeIf { webFilter: WebFilter? -> webFilter is NonGlobalFilter }
             }

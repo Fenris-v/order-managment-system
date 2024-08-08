@@ -10,8 +10,8 @@ import reactor.core.publisher.Hooks
  * Основной класс микросервиса Gateway, который также содержит Spring Security.
  */
 @EnableScheduling
-@SpringBootApplication
 @EnableR2dbcRepositories
+@SpringBootApplication(scanBasePackages = ["com.example.gateway", "com.example.starter.utils"])
 class GatewayApplication
 
 /**

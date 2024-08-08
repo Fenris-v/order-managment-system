@@ -11,10 +11,7 @@ import com.example.gateway.dto.response.FullUserDto
 import com.example.gateway.dto.response.JwtResponse
 import com.example.gateway.dto.response.UserDto
 import com.example.gateway.event.UserRegisteredEvent
-import com.example.gateway.exception.EntityNotFoundException
-import com.example.gateway.exception.ForbiddenException
 import com.example.gateway.exception.UnauthorizedException
-import com.example.gateway.exception.UnprocessableException
 import com.example.gateway.mapper.UserMapper
 import com.example.gateway.model.User
 import com.example.gateway.repository.AccessTokenRepository
@@ -23,6 +20,9 @@ import com.example.gateway.repository.UserRepository
 import com.example.gateway.service.mail.MailService
 import com.example.gateway.util.jwt.JwtUtil
 import com.example.gateway.util.jwt.RefreshTokenUtil
+import com.example.starter.utils.exception.EntityNotFoundException
+import com.example.starter.utils.exception.ForbiddenException
+import com.example.starter.utils.exception.UnprocessableException
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.json.Json
@@ -46,6 +46,7 @@ private val log: KLogger = KotlinLogging.logger {}
 class UserDetailsService(
     private val jwtUtil: JwtUtil,
     private val userMapper: UserMapper,
+    private val mailService: MailService,
     private val tokenService: TokenService,
     private val verifyService: VerifyService,
     private val userRepository: UserRepository,
@@ -54,8 +55,7 @@ class UserDetailsService(
     private val passwordService: NinjasPasswordService,
     private val eventPublisher: ApplicationEventPublisher,
     private val accessTokenRepository: AccessTokenRepository,
-    private val refreshTokenRepository: RefreshTokenRepository,
-    private val mailService: MailService
+    private val refreshTokenRepository: RefreshTokenRepository
 ) : ReactiveUserDetailsService {
     /**
      * Получение пользователя по id.
@@ -127,6 +127,13 @@ class UserDetailsService(
         }.then()
     }
 
+    /**
+     * Сброс пароля.
+     *
+     * @param request Данные для обновления.
+     * @return Моно без результата.
+     */
+    @Transactional
     fun resetPassword(request: EmailRequest): Mono<Void> {
         return userRepository.findUserByEmailIgnoreCase(request.email)
             .switchIfEmpty(Mono.error(EntityNotFoundException()))
@@ -142,6 +149,12 @@ class UserDetailsService(
             }.then()
     }
 
+    /**
+     * Генерация пароля.
+     *
+     * @param length Длина пароля.
+     * @return Моно с NinjaPasswordResponse.
+     */
     fun generatePassword(length: Int? = null): Mono<NinjaPasswordResponse> {
         return passwordService.generatePassword(length)
     }
@@ -198,7 +211,7 @@ class UserDetailsService(
     @Transactional(readOnly = true)
     override fun findByUsername(username: String?): Mono<UserDetails> {
         return userRepository.findUserByEmailIgnoreCase(username!!).onErrorResume { ex ->
-            log.error(ex) { String.format("Ошибка аутентификации - %s\n%s", username, ex.message) }
+            log.error(ex) { "Ошибка аутентификации - $username\n${ex.message}" }
             return@onErrorResume Mono.empty()
         }.cast(UserDetails::class.java)
     }

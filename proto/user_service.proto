@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package security;
+
+option java_package = "com.example.security";
+option java_multiple_files = true;
+
+message UserRequest{
+  oneof data {
+    uint64 id = 1;
+    string jwt = 2;
+  }
+}
+
+message UserResponse {
+  uint64 id = 1;
+  string email = 2;
+  optional string name = 3;
+  optional string lastname = 4;
+}
+
+service AuthService {
+  rpc GetUser(UserRequest) returns (UserResponse);
+}

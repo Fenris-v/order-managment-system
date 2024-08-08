@@ -55,7 +55,7 @@ class VerifyController(private val verifyService: VerifyService) {
      * @param verifyDto Данные для подтверждения.
      * @return Моно с EmptyResponse.
      */
-    @PostMapping("/verify")
+    @PostMapping
     @ApiResponses(
         value = [
             ApiResponse(

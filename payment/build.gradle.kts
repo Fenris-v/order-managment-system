@@ -1,3 +1,5 @@
+import com.google.protobuf.gradle.id
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,6 +7,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.3"
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
+
+    id("com.google.protobuf") version "0.9.4"
 }
 
 group = "com.example.payment"
@@ -18,21 +22,32 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-webflux:3.1.5")
-    implementation("org.springframework.cloud:spring-cloud-starter-config:4.0.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.2")
-    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.3")
+val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
-    implementation("io.projectreactor:reactor-test:3.5.8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
+dependencies {
+    implementation(project(":starter-utils")) // TODO: заменить на nexus
+//    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
+
+    versionCatalog.findBundle("spring").ifPresent { implementation(it) }
+    versionCatalog.findBundle("grpc").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("grpcClient").ifPresent { implementation(it) }
+    versionCatalog.findBundle("postgres").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("springValidation").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("springJpa").ifPresent { implementation(it) }
+
+    versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
+
+    versionCatalog.findBundle("logs").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("kotlinReflect").ifPresent { implementation(it) }
+
+    versionCatalog.findBundle("test").ifPresent { implementation(it) }
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
+    dependsOn("generateProto")
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
@@ -42,4 +57,30 @@ tasks.withType<Test> {
 
 tasks.bootJar {
     archiveFileName.set("payment.jar")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.27.3"
+    }
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.65.1"
+        }
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.plugins {
+                id("grpc")
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir("../proto")
+        }
+    }
 }

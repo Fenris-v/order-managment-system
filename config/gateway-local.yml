@@ -1,3 +1,7 @@
+grpc:
+  server:
+    port: ${SECURITY_GRPC_PORT:9001}
+
 spring:
   mail:
     host: ${SMTP_HOST:smtp.gmail.com}
@@ -36,13 +40,13 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/db.changelog-master.xml
-    url: jdbc:postgresql://${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:5432}/${GATEWAY_DB_NAME:order_management_db}?stringtype=unspecified
+    url: jdbc:postgresql://${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:6430}/${GATEWAY_DB_NAME:auth}?stringtype=unspecified
     user: ${GATEWAY_DB_USER:user}
     password: ${GATEWAY_DB_PASSWORD:secret}
     driver-class-name: org.postgresql.Driver
 
   r2dbc:
-    url: r2dbc:postgresql://${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:5432}/${GATEWAY_DB_NAME:order_management_db}?stringtype=unspecified
+    url: r2dbc:postgresql://${GATEWAY_DB_HOST:localhost}:${GATEWAY_DB_PORT:6430}/${GATEWAY_DB_NAME:auth}?stringtype=unspecified
     username: ${GATEWAY_DB_USER:user}
     password: ${GATEWAY_DB_PASSWORD:secret}
 
@@ -73,3 +77,8 @@ springdoc:
   api-docs:
     path: /v3/api-docs
     enabled: true
+
+starter:
+  utils:
+    web-client: true
+    jwt: true

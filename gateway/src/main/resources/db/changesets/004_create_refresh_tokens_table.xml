@@ -7,9 +7,6 @@
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="user_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
             <column name="access_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
@@ -23,10 +20,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <addForeignKeyConstraint baseTableName="refresh_tokens" baseColumnNames="user_id" validate="true"
-                                 constraintName="refresh_tokens_users_user_id_fk" onDelete="CASCADE"
-                                 referencedTableName="users" referencedColumnNames="id"/>
 
         <addForeignKeyConstraint baseTableName="refresh_tokens" baseColumnNames="access_id" validate="true"
                                  constraintName="refresh_tokens_access_tokens_access_id_fk" onDelete="CASCADE"

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "starter.utils.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Включить кастомный стартер.",
+      "defaultValue": true
+    }
+  ]
+}

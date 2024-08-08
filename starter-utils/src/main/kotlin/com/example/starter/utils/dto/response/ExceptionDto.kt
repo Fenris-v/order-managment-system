@@ -1,4 +1,4 @@
-package com.example.gateway.dto.response
+package com.example.starter.utils.dto.response
 
 import java.time.LocalDateTime
 

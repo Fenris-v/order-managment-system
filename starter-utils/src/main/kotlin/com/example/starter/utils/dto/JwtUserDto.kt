@@ -1,4 +1,4 @@
-package com.example.gateway.dto
+package com.example.starter.utils.dto
 
 /**
  * Класс данных (DTO) для представления пользователя в JWT (JSON Web Token).
@@ -6,4 +6,4 @@ package com.example.gateway.dto
  * Этот класс данных содержит поля, которые представляют в полезной нагрузке, которая будет включена в JSON Web Token
  * (JWT).
  */
-data class JwtUserDto(private val id: Long? = null, private val email: String? = null)
+data class JwtUserDto(val id: Long, val email: String)

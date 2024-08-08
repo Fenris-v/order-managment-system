@@ -1,6 +1,6 @@
 package com.example.gateway.config.security.handler
 
-import com.example.gateway.exception.BadRequestException
+import com.example.starter.utils.exception.BadRequestException
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus

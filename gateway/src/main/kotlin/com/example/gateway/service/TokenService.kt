@@ -98,8 +98,8 @@ class TokenService(
             .toInstant()
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
-        val refreshToken = RefreshToken(refreshId, user.id, accessId, expiration)
-        val refreshTokenDto = RefreshTokenDto(refreshId, token, user.id!!, accessId, expiration)
+        val refreshToken = RefreshToken(refreshId, accessId, expiration)
+        val refreshTokenDto = RefreshTokenDto(refreshId, token, accessId, expiration)
 
         return refreshTokenRepository.save(refreshToken).thenReturn(refreshTokenDto)
     }
