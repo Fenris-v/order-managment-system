@@ -1,1 +1,34 @@
+server:
+  port: 8003
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: inventory
+
+  profiles:
+    active: local, local-monitoring
+
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        enabled: true
+        service-id: discovery
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27010
+      database: inventory
+      username: root
+      password: example
+      authentication-database: admin
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
 
