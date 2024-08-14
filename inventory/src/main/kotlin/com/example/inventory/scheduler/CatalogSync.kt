@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 @Component
-class ProductSync(private val categorySyncUtil: CategorySyncUtil, private val productSyncUtil: ProductSyncUtil) {
-    @Scheduled(cron = "0 45 2 * * *")
+class CatalogSync(private val categorySyncUtil: CategorySyncUtil, private val productSyncUtil: ProductSyncUtil) {
+    @Scheduled(cron = "0 0 2 */7 * 1")
     fun sync() {
         categorySyncUtil.syncCategories()
             .then(Mono.defer { productSyncUtil.syncProducts() })

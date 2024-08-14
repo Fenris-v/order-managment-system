@@ -3,6 +3,7 @@ package com.example.inventory.utils.sync
 import com.example.inventory.model.Product
 import com.example.inventory.repository.CategoryRepository
 import com.example.inventory.repository.ProductRepository
+import com.example.inventory.utils.CurrencyConverter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.mongodb.DBRef
 import io.github.oshai.kotlinlogging.KLogger
@@ -76,7 +77,7 @@ class ProductSyncUtil(
             .findById(productResponse.id)
             .flatMap { product ->
                 product.title = product.title
-                product.price = product.price
+                product.price = CurrencyConverter.usdToRub(product.price)
                 product.categories = getCategoriesForProduct(productResponse, categoryMap)
 
                 productRepository.save(product)
@@ -93,7 +94,7 @@ class ProductSyncUtil(
         val product = Product(
             productResponse.id,
             productResponse.title,
-            productResponse.price,
+            CurrencyConverter.usdToRub(productResponse.price),
             getCategoriesForProduct(productResponse, categoryMap)
         )
 
