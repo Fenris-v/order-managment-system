@@ -8,6 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.mongodb.DBRef
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
+import org.springframework.context.annotation.Lazy
+import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriBuilder
@@ -19,44 +23,47 @@ import java.util.UUID
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Класс для синхронизации продуктов.
+ */
+@Lazy
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 class ProductSyncUtil(
+    @Value("\${app.productSync.host}") private val host: String,
+    @Value("\${app.productSync.scheme}") private val scheme: String,
     private val webClient: WebClient,
     private val productRepository: ProductRepository,
     private val categoryRepository: CategoryRepository
 ) {
+    /**
+     * Метод для синхронизации продуктов.
+     */
     fun syncProducts(): Mono<Void> {
         val categoryMap: MutableMap<String, UUID> = HashMap()
 
-        return categoryRepository.findAll()
-            .collectList()
-            .mapNotNull { categories -> categories?.forEach { categoryMap[it.slug] = it.id } }
-            .flatMap {
-                getPage()
-                    .flatMapMany { response ->
-                        val firstPageProcessing = parseProducts(response, categoryMap)
+        return categoryRepository.findAll().collectList()
+            .mapNotNull { categories -> categories?.forEach { categoryMap[it.slug] = it.id } }.flatMap {
+                getPage().flatMapMany { response ->
+                    val firstPageProcessing = parseProducts(response, categoryMap)
 
-                        val remainingPagesProcessing = Flux.fromIterable(getRemainingPages(response))
-                            .parallel()
-                            .runOn(Schedulers.boundedElastic())
+                    val remainingPagesProcessing =
+                        Flux.fromIterable(getRemainingPages(response)).parallel().runOn(Schedulers.boundedElastic())
                             .flatMap { skip ->
                                 getPage(skip, response.limit).flatMapMany { parseProducts(it, categoryMap) }
                             }
 
-                        Flux.concat(firstPageProcessing, remainingPagesProcessing)
-                    }
-                    .then()
+                    Flux.concat(firstPageProcessing, remainingPagesProcessing)
+                }.then()
             }
     }
 
     private fun getPage(skip: Int = 0, limit: Int = 30): Mono<ProductDataResponse> {
         return webClient.get()
-            .uri { builder ->
-                val uriBuilder: UriBuilder = builder.scheme("https").host("dummyjson.com").path("/products")
+            .uri {
+                val uriBuilder: UriBuilder = it.scheme(scheme).host(host).path("/products")
                 if (skip > 0) {
-                    uriBuilder
-                        .queryParam("skip", skip)
-                        .queryParam("limit", limit)
+                    uriBuilder.queryParam("skip", skip).queryParam("limit", limit)
                 }
 
                 uriBuilder.build()
@@ -66,28 +73,21 @@ class ProductSyncUtil(
     }
 
     private fun parseProducts(response: ProductDataResponse, categoryMap: Map<String, UUID>): ParallelFlux<Void> {
-        return Flux.fromIterable(response.products)
-            .parallel()
-            .runOn(Schedulers.boundedElastic())
+        return Flux.fromIterable(response.products).parallel().runOn(Schedulers.boundedElastic())
             .flatMap { processProduct(it, categoryMap) }
     }
 
-    private fun processProduct(productResponse: ProductResponse, categoryMap: Map<String, UUID>): Mono<Void> {
-        return productRepository
-            .findById(productResponse.id)
-            .flatMap { product ->
-                product.title = product.title
-                product.price = CurrencyConverter.usdToRub(product.price)
-                product.categories = getCategoriesForProduct(productResponse, categoryMap)
+    private fun processProduct(response: ProductResponse, categoryMap: Map<String, UUID>): Mono<Void> {
+        return productRepository.findById(response.id).flatMap { product ->
+            product.title = response.title
+            product.price = CurrencyConverter.usdToRub(response.price)
+            product.categories = getCategoriesForProduct(response, categoryMap)
 
-                productRepository.save(product)
-            }
-            .switchIfEmpty(createProduct(productResponse, categoryMap))
-            .onErrorResume {
-                log.error(it) { it.message }
-                Mono.error(it)
-            }
-            .then()
+            productRepository.save(product)
+        }.switchIfEmpty(createProduct(response, categoryMap)).onErrorResume {
+            log.error(it) { it.message }
+            Mono.error(it)
+        }.then()
     }
 
     private fun createProduct(productResponse: ProductResponse, categoryMap: Map<String, UUID>): Mono<Product> {
@@ -122,6 +122,9 @@ class ProductSyncUtil(
     }
 }
 
+/**
+ * Класс для получения данных о продуктах.
+ */
 data class ProductDataResponse(
     @JsonProperty("products") val products: List<ProductResponse>,
     @JsonProperty("total") val total: Int,
@@ -129,6 +132,9 @@ data class ProductDataResponse(
     @JsonProperty("limit") val limit: Int
 )
 
+/**
+ * Класс для получения данных о продукте.
+ */
 data class ProductResponse(
     @JsonProperty("id") val id: Long,
     @JsonProperty("title") val title: String,

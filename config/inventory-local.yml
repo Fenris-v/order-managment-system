@@ -46,3 +46,8 @@ springdoc:
 starter:
   utils:
     web-client: true
+
+app:
+  productSync:
+    scheme: https
+    host: dummyjson.com
