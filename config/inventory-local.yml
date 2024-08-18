@@ -2,6 +2,16 @@ spring:
   application:
     name: inventory
 
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: ${MONGO_HOST:localhost}
+      port: ${MONGO_PORT:27010}
+      database: ${MONGO_DATABASE:inventory}
+      username: ${MONGO_USERNAME:root}
+      password: ${MONGO_PASSWORD:example}
+      authentication-database: admin
+
   boot:
     admin:
       client:

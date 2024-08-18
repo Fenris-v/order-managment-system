@@ -95,6 +95,7 @@ class ProductSyncUtil(
             productResponse.id,
             productResponse.title,
             CurrencyConverter.usdToRub(productResponse.price),
+            productResponse.stock,
             getCategoriesForProduct(productResponse, categoryMap)
         )
 
@@ -139,5 +140,6 @@ data class ProductResponse(
     @JsonProperty("id") val id: Long,
     @JsonProperty("title") val title: String,
     @JsonProperty("price") val price: Double,
+    @JsonProperty("stock") val stock: Int,
     @JsonProperty("category") val category: String
 )

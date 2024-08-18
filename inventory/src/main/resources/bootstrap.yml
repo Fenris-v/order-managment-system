@@ -18,15 +18,6 @@ spring:
         enabled: true
         service-id: discovery
 
-  data:
-    mongodb:
-      host: localhost
-      port: 27010
-      database: inventory
-      username: root
-      password: example
-      authentication-database: admin
-
 eureka:
   client:
     serviceUrl:

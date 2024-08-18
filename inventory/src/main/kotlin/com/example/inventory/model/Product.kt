@@ -12,5 +12,6 @@ class Product(
     @Id val id: Long,
     var title: String,
     var price: Int,
+    var stock: Int,
     var categories: List<DBRef>
 )
