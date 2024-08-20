@@ -23,6 +23,7 @@ repositories {
 dependencies {
     versionCatalog.findLibrary("springConfigServer").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springEurekaServer").ifPresent { implementation(it) }
+    versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
 }
 
 tasks.withType<KotlinCompile> {

@@ -51,7 +51,7 @@ dependencies {
 
     versionCatalog.findLibrary("caffeine").ifPresent { implementation(it) }
 
-//    versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
+    versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
     versionCatalog.findBundle("logs").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("test").ifPresent { testImplementation(it) }

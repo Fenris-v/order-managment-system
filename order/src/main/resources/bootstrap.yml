@@ -18,4 +18,4 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
+      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${OMS_DISCOVERY_PORT:8000}/eureka
