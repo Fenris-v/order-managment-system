@@ -89,18 +89,18 @@ services:
     networks:
       - oms
 
-  #  mongo_order:
-  #    image: mongo:6.0.11
-  #    container_name: mongo_order
-  #    environment:
-  #      MONGO_INITDB_ROOT_USERNAME: root
-  #      MONGO_INITDB_ROOT_PASSWORD: example
-  #    volumes:
-  #      - order:/data/db
-  #    ports:
-  #      - "27018:27017"
-  #    networks:
-  #      - oms
+  mongo_order:
+    image: mongo:6.0.11
+    container_name: mongo_order
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - order:/data/db
+    ports:
+      - "27011:27017"
+    networks:
+      - oms
 
   #  mongo_delivery:
   #    image: mongo:6.0.11
@@ -208,8 +208,8 @@ networks:
 volumes:
   auth:
     driver: local
-  #  order:
-  #    driver: local
+  order:
+    driver: local
   payment:
     driver: local
   inventory:

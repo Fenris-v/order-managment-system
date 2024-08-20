@@ -2,6 +2,16 @@ spring:
   application:
     name: order
 
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: ${MONGO_ORDER_HOST:localhost}
+      port: ${MONGO_ORDER_PORT:27010}
+      database: ${MONGO_ORDER_DATABASE:inventory}
+      username: ${MONGO_ORDER_USERNAME:root}
+      password: ${MONGO_ORDER_PASSWORD:example}
+      authentication-database: admin
+
 eureka:
   client:
     serviceUrl:
@@ -23,6 +33,14 @@ management:
         enabled: true
 
 springdoc:
+  domain: ${APP_DOMAIN:http://localhost:8080}
+  prefix: /api/v1/order
+  swagger-ui:
+    path: /swagger
   api-docs:
     path: /v3/api-docs
     enabled: true
+
+starter:
+  utils:
+    model-mapper: true

@@ -18,15 +18,25 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-webflux:3.1.5")
-    implementation("org.springframework.cloud:spring-cloud-starter-config:4.0.3")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.2")
-    implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.3")
+val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.20-RC")
-    implementation("io.projectreactor:reactor-test:3.5.8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.2")
+    implementation("org.springframework.cloud:spring-cloud-stream:4.1.3")
+    implementation("org.modelmapper:modelmapper:3.2.1")
+
+    implementation(project(":starter-utils")) // TODO: заменить на nexus
+
+    versionCatalog.findBundle("spring").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("springValidation").ifPresent { implementation(it) }
+
+    versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
+
+    versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
+    versionCatalog.findBundle("logs").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("kotlinReflect").ifPresent { implementation(it) }
+
+    versionCatalog.findBundle("test").ifPresent { implementation(it) }
 }
 
 tasks.withType<KotlinCompile> {
