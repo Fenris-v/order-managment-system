@@ -70,6 +70,10 @@ services:
       - 'payment:/var/lib/postgresql/data'
     networks:
       - oms
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-order_management_db}", "-U", "${DB_USERNAME:-user}" ]
+      retries: 3
+      timeout: 5s
     container_name: payment_pgsql
 
   mongo_inventory:
