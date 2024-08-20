@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: discovery
-          image: fenrisv/discovery
+          image: fenrisv/discovery:0.0.3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

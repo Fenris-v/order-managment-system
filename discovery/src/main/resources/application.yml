@@ -1,5 +1,5 @@
 server:
-  port: ${DISCOVERY_PORT:8000}
+  port: ${OMS_DISCOVERY_PORT:8000}
 
 spring:
   application:
@@ -13,7 +13,7 @@ spring:
       server:
         prefix: /config
         native:
-          search-locations: file:${CONFIG_PATH:./config/}
+          search-locations: file:${OMS_CONFIG_PATH:./config/}
 
 eureka:
   dashboard:
@@ -24,7 +24,7 @@ eureka:
     fetch-registry: false
     enabled: true
     service-url:
-      defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${DISCOVERY_PORT:8000}/eureka
+      defaultZone: ${OMS_SERVICE_PROTOCOL:http://}${OMS_DISCOVERY_DOMAIN:localhost}:${OMS_DISCOVERY_PORT:8080}/eureka
 
 management:
   endpoint:
