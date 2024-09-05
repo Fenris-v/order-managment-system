@@ -1,6 +1,6 @@
 package com.example.inventory.controller
 
-import com.example.starter.utils.controller.AbstractExceptionHandler
+import com.example.starter.utils.handler.AbstractExceptionHandler
 import org.springframework.web.bind.annotation.ControllerAdvice
 
 /**

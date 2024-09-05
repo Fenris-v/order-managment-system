@@ -1,31 +1,28 @@
 package com.example.order.service
 
 import com.example.order.dto.request.OrderRequest
-import com.example.order.enums.Status
-import com.example.order.model.Order
-import com.example.order.model.OrderProducts
+import com.example.order.dto.response.OrderResponse
+import com.example.order.mapper.OrderMapper
+import com.example.order.producer.OrderProcessor
 import com.example.order.repository.OrderRepository
-import org.modelmapper.ModelMapper
+import com.example.starter.utils.utils.jwt.JwtUtils
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import java.time.LocalDateTime
-import java.util.UUID
 
 @Service
-class OrderService(private val orderRepository: OrderRepository, private val modelMapper: ModelMapper) {
-    fun createOrder(orderRequest: OrderRequest, userId: Long): Mono<Void> {
-        return Mono.just(
-            Order(
-                UUID.randomUUID(),
-                userId,
-                Status.REGISTERED,
-                orderRequest.products!!.map { orderProduct ->
-                    modelMapper.map(orderProduct, OrderProducts::class.java)
-                },
-                LocalDateTime.now(),
-                LocalDateTime.now()
-            )
-        )
-            .flatMap { orderRepository.save(it).then() }
+class OrderService(
+    private val orderRepository: OrderRepository,
+    private val orderProcessor: OrderProcessor,
+    private val orderMapper: OrderMapper,
+    private val jwtUtils: JwtUtils
+) {
+    fun createOrder(orderRequest: OrderRequest, authorization: String): Mono<OrderResponse> {
+        return Mono.just(jwtUtils.extractAllClaims(authorization).id)
+            .flatMap { userId -> Mono.just(orderMapper.mapOrderRequestToOrder(orderRequest, userId)) }
+            .flatMap { order ->
+                orderRepository.save(order)
+                    .flatMap { Mono.just(orderProcessor.process(it)) }
+                    .map { OrderResponse(order.id, order.status) }
+            }
     }
 }

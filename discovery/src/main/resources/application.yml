@@ -24,7 +24,7 @@ eureka:
     fetch-registry: false
     enabled: true
     service-url:
-      defaultZone: ${OMS_SERVICE_PROTOCOL:http://}${OMS_DISCOVERY_DOMAIN:localhost}:${OMS_DISCOVERY_PORT:8080}/eureka
+      defaultZone: ${OMS_SERVICE_PROTOCOL:http://}${OMS_DISCOVERY_DOMAIN:localhost}:${OMS_DISCOVERY_PORT:8000}/eureka
 
 management:
   endpoint:

@@ -70,14 +70,10 @@ services:
       - 'payment:/var/lib/postgresql/data'
     networks:
       - oms
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-order_management_db}", "-U", "${DB_USERNAME:-user}" ]
-      retries: 3
-      timeout: 5s
     container_name: payment_pgsql
 
   mongo_inventory:
-    image: mongo:6.0.11
+    image: mongo:7.0.14
     container_name: mongo_inventory
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -90,7 +86,7 @@ services:
       - oms
 
   mongo_order:
-    image: mongo:6.0.11
+    image: mongo:7.0.14
     container_name: mongo_order
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -103,7 +99,7 @@ services:
       - oms
 
   #  mongo_delivery:
-  #    image: mongo:6.0.11
+  #    image: mongo:7.0.14
   #    container_name: mongo_delivery
   #    environment:
   #      MONGO_INITDB_ROOT_USERNAME: root
@@ -143,7 +139,7 @@ services:
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:29091,PLAINTEXT_HOST://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29091,PLAINTEXT_HOST://kafka:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29091,PLAINTEXT_HOST://localhost:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     networks:

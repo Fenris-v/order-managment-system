@@ -1,15 +1,7 @@
 package com.example.order.dto.request
 
-import jakarta.validation.constraints.Min
+import com.example.starter.utils.dto.order.OrderProduct
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 
-data class OrderRequest(@field:Min(1) @field:NotNull var products: List<OrderProduct>? = null)
-
-data class OrderProduct(
-    @field:NotNull
-    var productId: Long? = null,
-
-    @field:Min(1)
-    @field:NotNull
-    var amount: Int? = null
-)
+data class OrderRequest(@field:Size(min = 1) @field:NotNull var products: List<OrderProduct>? = null)

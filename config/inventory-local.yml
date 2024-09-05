@@ -11,6 +11,8 @@ spring:
       username: ${MONGO_INVENTORY_USERNAME:root}
       password: ${MONGO_INVENTORY_PASSWORD:example}
       authentication-database: admin
+      replica-set-name: rs0
+      transactional-connection: false # TODO: Включить, после того, как будет настроено реплицирование в MongoDB.
 
   boot:
     admin:
@@ -23,7 +25,6 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
-    topic:
     consumer:
       group-id: inventory
       auto-offset-reset: earliest
@@ -35,9 +36,14 @@ spring:
             trusted:
               packages: "*"
 
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  cloud:
+    stream:
+      bindings:
+        orderRegisteredEventProcessor-in-0:
+          destination: orders
+          group: inventory
+        orderRegisteredEventProcessor-out-0:
+          destination: inventory
 
 eureka:
   client:
