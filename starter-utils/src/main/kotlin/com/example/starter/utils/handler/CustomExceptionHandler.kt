@@ -1,4 +1,4 @@
-package com.example.starter.utils.controller
+package com.example.starter.utils.handler
 
 import com.example.starter.utils.dto.response.ExceptionDto
 import com.example.starter.utils.dto.response.ValidatorResponse

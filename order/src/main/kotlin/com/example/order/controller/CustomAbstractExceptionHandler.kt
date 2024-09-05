@@ -1,4 +1,4 @@
-package com.example.payment.controller
+package com.example.order.controller
 
 import com.example.starter.utils.handler.AbstractExceptionHandler
 import org.springframework.web.bind.annotation.ControllerAdvice
