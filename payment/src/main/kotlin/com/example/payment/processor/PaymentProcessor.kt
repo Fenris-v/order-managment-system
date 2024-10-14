@@ -52,7 +52,7 @@ class PaymentProcessor(private val uMoneyPaymentService: UMoneyPaymentService) {
      * @param event Событие платежа
      */
     fun submitTask(event: PaymentEvent) {
-        delayQueue.offer(event)
+        delayQueue.put(event)
         log.info { "Задача на проверку статуса транзакции добавлена в очередь" }
     }
 

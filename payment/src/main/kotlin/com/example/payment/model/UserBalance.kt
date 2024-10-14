@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 data class UserBalance(
     @Id
     val userId: Long? = null,
-    val amount: Double? = null,
+    var amount: Double? = null,
 
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)

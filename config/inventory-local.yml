@@ -19,12 +19,17 @@ spring:
       client:
         url: ${SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${ADMIN_PORT:8999}
         instance:
-          service-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}
-          health-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator/health
-          management-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator
+          service-url: ${SERVICE_PROTOCOL:http://}${INVENTORY_DOMAIN:localhost}:${INVENTORY_PORT:8003}
+          health-url: ${SERVICE_PROTOCOL:http://}${INVENTORY_DOMAIN:localhost}:${INVENTORY_PORT:8003}/actuator/health
+          management-url: ${SERVICE_PROTOCOL:http://}${INVENTORY_DOMAIN:localhost}:${INVENTORY_PORT:8003}/actuator
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    topic:
+      orders: ${ORDER_TOPIC:orders}
+      inventory: ${INVENTORY_TOPIC:inventory}
+      payment: ${PAYMENT_TOPIC:payment}
+
     consumer:
       group-id: inventory
       auto-offset-reset: earliest
@@ -36,14 +41,9 @@ spring:
             trusted:
               packages: "*"
 
-  cloud:
-    stream:
-      bindings:
-        orderRegisteredEventProcessor-in-0:
-          destination: orders
-          group: inventory
-        orderRegisteredEventProcessor-out-0:
-          destination: inventory
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 eureka:
   client:

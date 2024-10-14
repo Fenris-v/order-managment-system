@@ -98,19 +98,6 @@ services:
     networks:
       - oms
 
-  #  mongo_delivery:
-  #    image: mongo:7.0.14
-  #    container_name: mongo_delivery
-  #    environment:
-  #      MONGO_INITDB_ROOT_USERNAME: root
-  #      MONGO_INITDB_ROOT_PASSWORD: example
-  #    volumes:
-  #      - delivery:/data/db
-  #    ports:
-  #      - "27011:27017"
-  #    networks:
-  #      - oms
-
   ### Кафка ###
   zookeeper:
     container_name: zookeeper
@@ -210,5 +197,3 @@ volumes:
     driver: local
   inventory:
     driver: local
-  #  delivery:
-  #    driver: local

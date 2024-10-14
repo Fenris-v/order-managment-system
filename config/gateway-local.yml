@@ -1,6 +1,7 @@
 grpc:
   server:
     port: ${SECURITY_GRPC_PORT:9001}
+    reflectionServiceEnabled: false
 
 spring:
   mail:

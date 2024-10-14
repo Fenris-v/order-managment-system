@@ -14,6 +14,12 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    topic:
+      orders: ${ORDER_TOPIC:orders}
+      inventory: ${INVENTORY_TOPIC:inventory}
+      payment: ${PAYMENT_TOPIC:payment}
+      delivery: ${DELIVERY_TOPIC:delivery}
+
     consumer:
       group-id: orders
       auto-offset-reset: earliest
@@ -24,6 +30,10 @@ spring:
           json:
             trusted:
               packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
   cloud:
     stream:
