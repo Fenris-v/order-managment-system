@@ -25,6 +25,7 @@ repositories {
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
+    implementation("org.springframework.kafka:spring-kafka:3.2.4")
     implementation(project(":starter-utils")) // TODO: заменить на nexus
 //    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
 

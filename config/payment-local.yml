@@ -13,9 +13,9 @@ spring:
       client:
         url: ${SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${ADMIN_PORT:8999}
         instance:
-          service-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}
-          health-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator/health
-          management-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator
+          service-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8001}
+          health-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8001}/actuator/health
+          management-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8001}/actuator
 
   liquibase:
     enabled: true
@@ -33,6 +33,9 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
     topic:
+      inventory: ${INVENTORY_TOPIC:inventory}
+      payment: ${PAYMENT_TOPIC:payment}
+
     consumer:
       group-id: payment
       auto-offset-reset: earliest

@@ -5,25 +5,31 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-      host: ${MONGO_HOST:localhost}
-      port: ${MONGO_PORT:27010}
-      database: ${MONGO_DATABASE:inventory}
-      username: ${MONGO_USERNAME:root}
-      password: ${MONGO_PASSWORD:example}
+      host: ${MONGO_INVENTORY_HOST:localhost}
+      port: ${MONGO_INVENTORY_PORT:27010}
+      database: ${MONGO_INVENTORY_DATABASE:inventory}
+      username: ${MONGO_INVENTORY_USERNAME:root}
+      password: ${MONGO_INVENTORY_PASSWORD:example}
       authentication-database: admin
+      replica-set-name: rs0
+      transactional-connection: false # TODO: Включить, после того, как будет настроено реплицирование в MongoDB.
 
   boot:
     admin:
       client:
         url: ${SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${ADMIN_PORT:8999}
         instance:
-          service-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}
-          health-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator/health
-          management-url: ${SERVICE_PROTOCOL:http://}${PAYMENT_DOMAIN:localhost}:${PAYMENT_PORT:8000}/actuator
+          service-url: ${SERVICE_PROTOCOL:http://}${INVENTORY_DOMAIN:localhost}:${INVENTORY_PORT:8003}
+          health-url: ${SERVICE_PROTOCOL:http://}${INVENTORY_DOMAIN:localhost}:${INVENTORY_PORT:8003}/actuator/health
+          management-url: ${SERVICE_PROTOCOL:http://}${INVENTORY_DOMAIN:localhost}:${INVENTORY_PORT:8003}/actuator
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
     topic:
+      orders: ${ORDER_TOPIC:orders}
+      inventory: ${INVENTORY_TOPIC:inventory}
+      payment: ${PAYMENT_TOPIC:payment}
+
     consumer:
       group-id: inventory
       auto-offset-reset: earliest
@@ -56,6 +62,7 @@ springdoc:
 starter:
   utils:
     web-client: true
+    model-mapper: true
 
 app:
   productSync:

@@ -30,8 +30,8 @@ class AuthService(private val jwtUtils: JwtUtils, private val userRepository: Us
                 UserResponse.newBuilder()
                     .setId(it.id!!)
                     .setEmail(it.email)
-                    .setName(it.name)
-                    .setLastname(it.lastname)
+                    .setName(it.name ?: "")
+                    .setLastname(it.lastname ?: "")
                     .build()
             }
             .subscribe(

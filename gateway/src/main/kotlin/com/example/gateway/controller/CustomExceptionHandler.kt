@@ -1,8 +1,8 @@
 package com.example.gateway.controller
 
 import com.example.gateway.exception.ThrottleException
-import com.example.starter.utils.controller.AbstractExceptionHandler
 import com.example.starter.utils.dto.response.ExceptionDto
+import com.example.starter.utils.handler.AbstractExceptionHandler
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
