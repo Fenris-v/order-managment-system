@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: security-db-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: security-db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    component: security-db

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: delivery-app
+  labels:
+    component: delivery
+spec:
+  containers:
+    - name: delivery
+      image: fenrisv/delivery:0.0.1
+      ports:
+        - containerPort: 8002
+      env:
+        - name: DELIVERY_DOMAIN
+          value: delivery-service
+        - name: DISCOVERY_DOMAIN
+          value: discovery-service
+        - name: ZIPKIN_DOMAIN
+          value: zipkin-service
+        - name: ADMIN_DOMAIN
+          value: actuator-service
+        - name: KAFKA_HOST
+          value: kafka-service

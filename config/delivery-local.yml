@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: delivery
-
   boot:
     admin:
       client:

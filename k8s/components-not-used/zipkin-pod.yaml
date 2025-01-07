@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: zipkin-app
+  labels:
+    component: zipkin
+spec:
+  containers:
+    - name: zipkin
+      image: openzipkin/zipkin:latest
+      ports:
+        - containerPort: 9411

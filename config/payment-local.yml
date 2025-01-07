@@ -5,9 +5,6 @@ grpc:
       negotiationType: PLAINTEXT
 
 spring:
-  application:
-    name: payment
-
   boot:
     admin:
       client:

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: discovery
+  template:
+    metadata:
+      labels:
+        component: discovery
+    spec:
+      containers:
+        - name: discovery
+          image: fenrisv/discovery:0.0.1
+          ports:
+            - containerPort: 8000
+          env:
+            - name: EUREKA_INSTANCE_HOSTNAME
+              value: discovery-service
+            - name: ZIPKIN_DOMAIN
+              value: zipkin-service
+            - name: OMS_DISCOVERY_DOMAIN
+              value: discovery-service

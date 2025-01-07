@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: actuator-app
+  labels:
+    component: actuator
+spec:
+  containers:
+    - name: actuator
+      image: fenrisv/actuator:0.0.1
+      ports:
+        - containerPort: 8999

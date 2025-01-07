@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-mongo-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: inventory-mongo
+      protocol: TCP
+      port: 27018
+      targetPort: 27017
+  selector:
+    component: inventory-mongo

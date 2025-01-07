@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actuator-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: actuator
+  template:
+    metadata:
+      labels:
+        component: actuator
+    spec:
+      containers:
+        - name: actuator
+          image: fenrisv/actuator:0.0.1
+          ports:
+            - containerPort: 8999
