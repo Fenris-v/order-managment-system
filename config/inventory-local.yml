@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: inventory
-
   data:
     mongodb:
       auto-index-creation: true

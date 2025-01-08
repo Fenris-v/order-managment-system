@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-db
+  labels:
+    component: security-db
+spec:
+  containers:
+    - name: security-db
+      image: postgres:latest
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_USER
+          value: user
+        - name: POSTGRES_PASSWORD
+          value: secret
+        - name: POSTGRES_DB
+          value: auth

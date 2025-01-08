@@ -16,6 +16,9 @@ spring:
           search-locations: file:${OMS_CONFIG_PATH:./config/}
 
 eureka:
+  instance:
+    hostname: ${EUREKA_INSTANCE_HOSTNAME:localhost}
+
   dashboard:
     path: /admin/dashboard
     enabled: true
@@ -40,3 +43,11 @@ management:
     metrics:
       export:
         enabled: true
+
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://${ZIPKIN_DOMAIN:localhost}:${ZIPKIN_PORT:9411}/api/v2/spans

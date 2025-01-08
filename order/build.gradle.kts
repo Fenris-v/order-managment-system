@@ -32,7 +32,7 @@ dependencies {
 
     versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
 
-    // versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
+    versionCatalog.findBundle("monitoring").ifPresent { implementation(it) }
     versionCatalog.findBundle("logs").ifPresent { implementation(it) }
     versionCatalog.findLibrary("kotlinReflect").ifPresent { implementation(it) }
 

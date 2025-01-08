@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: security-db
+  template:
+    metadata:
+      labels:
+        component: security-db
+    spec:
+      containers:
+        - name: security-db
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: secret
+            - name: POSTGRES_DB
+              value: auth

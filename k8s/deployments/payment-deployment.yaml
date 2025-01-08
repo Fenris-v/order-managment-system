@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: payment
+  template:
+    metadata:
+      labels:
+        component: payment
+    spec:
+      containers:
+        - name: payment
+          image: fenrisv/payment:0.0.1
+          ports:
+            - containerPort: 8004
+          env:
+            - name: PAYMENT_DOMAIN
+              value: payment-service
+            - name: PAYMENT_DB_HOST
+              value: payment-db-service
+            - name: PAYMENT_DB_PORT
+              value: "5433"
+            - name: PAYMENT_DB_USER
+              value: user
+            - name: PAYMENT_DB_PASSWORD
+              value: secret
+            - name: PAYMENT_DB_NAME
+              value: payment
+            - name: DISCOVERY_DOMAIN
+              value: discovery-service
+            - name: ZIPKIN_DOMAIN
+              value: zipkin-service
+            - name: ADMIN_DOMAIN
+              value: actuator-service
+            - name: KAFKA_HOST
+              value: kafka-service

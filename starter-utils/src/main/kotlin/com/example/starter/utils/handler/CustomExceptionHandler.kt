@@ -57,6 +57,7 @@ abstract class AbstractExceptionHandler {
      */
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEntityNotFoundException(ex: EntityNotFoundException): ResponseEntity<Any> {
+        log.error(ex) { ex.message }
         val status = HttpStatus.NOT_FOUND
         val dto = ExceptionDto("Not found", status.value())
         return ResponseEntity(dto, status)

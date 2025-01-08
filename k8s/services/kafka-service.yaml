@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: kafka
+      protocol: TCP
+      port: 9092
+      targetPort: 9092
+    - name: kafka-drop
+      protocol: TCP
+      port: 29091
+      targetPort: 29091
+  selector:
+    component: kafka

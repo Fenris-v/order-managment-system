@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: order
-
   data:
     mongodb:
       auto-index-creation: true
@@ -11,6 +8,15 @@ spring:
       username: ${MONGO_ORDER_USERNAME:root}
       password: ${MONGO_ORDER_PASSWORD:example}
       authentication-database: admin
+
+  boot:
+    admin:
+      client:
+        url: ${SERVICE_PROTOCOL:http://}${ADMIN_DOMAIN:localhost}:${ADMIN_PORT:8999}
+        instance:
+          service-url: ${SERVICE_PROTOCOL:http://}${ORDER_DOMAIN:localhost}:${ORDER_PORT:8004}
+          health-url: ${SERVICE_PROTOCOL:http://}${ORDER_DOMAIN:localhost}:${ORDER_PORT:8004}/actuator/health
+          management-url: ${SERVICE_PROTOCOL:http://}${ORDER_DOMAIN:localhost}:${ORDER_PORT:8004}/actuator
 
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
@@ -35,34 +41,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
-  cloud:
-    stream:
-      bindings:
-        orderRegisteredEventPublisher-out-0:
-          destination: orders
-        itemsReservedEventProcessor-in-0:
-          destination: inventory
-          group: orders
-
 eureka:
   client:
     serviceUrl:
       defaultZone: ${SERVICE_PROTOCOL:http://}${DISCOVERY_DOMAIN:localhost}:${OMS_DISCOVERY_PORT:8000}/eureka
-
-management:
-  endpoint:
-    health:
-      show-details: always
-
-  endpoints:
-    web:
-      exposure:
-        include: 'health,prometheus'
-
-  prometheus:
-    metrics:
-      export:
-        enabled: true
 
 springdoc:
   domain: ${APP_DOMAIN:http://localhost:8080}
