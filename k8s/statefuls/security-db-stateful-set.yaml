@@ -1,8 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: security-db-deployment
+  namespace: oms
 spec:
+  serviceName: security-db
   replicas: 1
   selector:
     matchLabels:
@@ -18,9 +20,15 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_USER
-              value: user
-            - name: POSTGRES_PASSWORD
-              value: secret
             - name: POSTGRES_DB
               value: auth
+          envFrom:
+            - configMapRef:
+                name: configs
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: security-db-storage
+      volumes:
+        - name: security-db-storage
+          persistentVolumeClaim:
+            claimName: security-db-pvc

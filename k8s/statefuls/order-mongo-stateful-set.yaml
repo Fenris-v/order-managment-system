@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: order-mongo-deployment
+  namespace: oms
+spec:
+  serviceName: order-mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      component: order-mongo
+  template:
+    metadata:
+      labels:
+        component: order-mongo
+    spec:
+      containers:
+        - name: order-mongo
+          image: mongo:7.0.14
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - configMapRef:
+                name: configs
+          volumeMounts:
+            - mountPath: /data/db
+              name: order-mongo-volume
+      volumes:
+        - name: order-mongo-volume
+          persistentVolumeClaim:
+            claimName: order-mongo-pvc

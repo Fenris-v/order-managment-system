@@ -1,9 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: zookeeper-app
+  namespace: oms
 spec:
-  replicas: 1
   selector:
     matchLabels:
       component: zookeeper

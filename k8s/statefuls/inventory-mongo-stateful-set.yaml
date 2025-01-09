@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: inventory-mongo-deployment
+  namespace: oms
+spec:
+  serviceName: inventory-mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      component: inventory-mongo
+  template:
+    metadata:
+      labels:
+        component: inventory-mongo
+    spec:
+      containers:
+        - name: inventory-mongo
+          image: mongo:7.0.14
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - configMapRef:
+                name: configs
+          volumeMounts:
+            - mountPath: /data/db
+              name: inventory-mongo-storage
+      volumes:
+        - name: inventory-mongo-storage
+          persistentVolumeClaim:
+            claimName: inventory-mongo-pvc

@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configs
+  namespace: oms
+data:
+  # Kafka
+  ALLOW_PLAINTEXT_LISTENER: "yes"
+  KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper-service:2181"
+  KAFKA_CFG_BROKER_ID: "1"
+  KAFKA_CFG_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+  KAFKA_CFG_LISTENERS: "PLAINTEXT://:29091,PLAINTEXT_HOST://:9092"
+  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-service:29091,PLAINTEXT_HOST://kafka-service:9092"
+  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+  KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  # DBs
+  MONGO_INITDB_ROOT_USERNAME: "root"
+  MONGO_INITDB_ROOT_PASSWORD: "example"
+
+  POSTGRES_USER: "user"
+  POSTGRES_PASSWORD: "secret"
+
+  # Discovery
+  DISCOVERY_DOMAIN: "${OMS_DISCOVERY_DOMAIN}"
+  EUREKA_INSTANCE_HOSTNAME: "${OMS_DISCOVERY_DOMAIN}"
+  OMS_DISCOVERY_DOMAIN: "discovery-service"
+
+  # Microservices
+  DELIVERY_DOMAIN: "delivery-service"
+  ZIPKIN_DOMAIN: "zipkin-service"
+  ADMIN_DOMAIN: "actuator-service"
+  KAFKA_HOST: "kafka-service"
+
+  GATEWAY_DOMAIN: "gateway-service"
+  GATEWAY_DB_HOST: "security-db-service"
+  GATEWAY_DB_PORT: "5432"
+  GATEWAY_DB_USER: "user"
+  GATEWAY_DB_PASSWORD: "secret"
+  GATEWAY_DB_NAME: "auth"
+
+  INVENTORY_DOMAIN: "inventory-service"
+  MONGO_INVENTORY_HOST: "inventory-mongo-service"
+  MONGO_INVENTORY_PORT: "27018"
+
+  ORDER_DOMAIN: "order-service"
+  MONGO_ORDER_HOST: "order-mongo-service"
+  MONGO_ORDER_PORT: "27017"
+
+  PAYMENT_DOMAIN: "payment-service"
+  PAYMENT_DB_HOST: "payment-db-service"
+  PAYMENT_DB_PORT: "5433"
+  PAYMENT_DB_USER: "user"
+  PAYMENT_DB_PASSWORD: "secret"
+  PAYMENT_DB_NAME: "payment"

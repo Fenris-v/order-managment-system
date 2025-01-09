@@ -12,7 +12,6 @@ FROM amd64/openjdk:17-alpine AS production
 
 WORKDIR /app
 
-COPY ./config ./config
 COPY --from=builder /app/discovery/build/libs/discovery.jar .
 EXPOSE 8080
 

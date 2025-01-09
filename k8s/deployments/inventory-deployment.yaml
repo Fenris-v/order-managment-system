@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inventory-deployment
+  namespace: oms
 spec:
   replicas: 2
   selector:
@@ -17,18 +18,6 @@ spec:
           image: fenrisv/inventory:0.0.1
           ports:
             - containerPort: 8003
-          env:
-            - name: INVENTORY_DOMAIN
-              value: inventory-service
-            - name: DISCOVERY_DOMAIN
-              value: discovery-service
-            - name: ZIPKIN_DOMAIN
-              value: zipkin-service
-            - name: ADMIN_DOMAIN
-              value: actuator-service
-            - name: KAFKA_HOST
-              value: kafka-service
-            - name: MONGO_INVENTORY_HOST
-              value: inventory-mongo-service
-            - name: MONGO_INVENTORY_PORT
-              value: "27018"
+          envFrom:
+            - configMapRef:
+                name: configs
