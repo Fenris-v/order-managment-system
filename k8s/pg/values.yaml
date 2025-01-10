@@ -1,0 +1,40 @@
+initdbScripts:
+  create_user_and_schema.sql: |
+    -- Создание пользователя
+    CREATE USER user WITH PASSWORD 'secret';
+    -- Создание базы данных
+    CREATE DATABASE mydatabase;
+    -- Назначение владельца базы данных
+    ALTER DATABASE mydatabase OWNER TO user;
+    -- Подключение к базе данных и создание схемы
+    \connect mydatabase
+    CREATE SCHEMA app_schema AUTHORIZATION user;
+
+primary:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+
+replica:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+
+readReplicas:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+
+replicaCount: 2
