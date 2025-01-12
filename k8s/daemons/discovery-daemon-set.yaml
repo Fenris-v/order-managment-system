@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: discovery-deployment
+  namespace: oms
+spec:
+  selector:
+    matchLabels:
+      component: discovery
+  template:
+    metadata:
+      labels:
+        component: discovery
+    spec:
+      containers:
+        - name: discovery
+          image: fenrisv/discovery:0.0.1
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: configs
+          volumeMounts:
+            - mountPath: /app/config
+              name: discovery-storage
+      volumes:
+        - name: discovery-storage
+          hostPath:
+            path: /run/desktop/mnt/host/c/www/order-managment-system/config/

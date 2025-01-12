@@ -1,8 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: payment-db-deployment
+  namespace: oms
 spec:
+  serviceName: payment-db
   replicas: 1
   selector:
     matchLabels:
@@ -18,9 +20,15 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_USER
-              value: user
-            - name: POSTGRES_PASSWORD
-              value: secret
             - name: POSTGRES_DB
               value: payment
+          envFrom:
+            - configMapRef:
+                name: configs
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: payment-db-storage
+      volumes:
+        - name: payment-db-storage
+          persistentVolumeClaim:
+            claimName: payment-db-pvc

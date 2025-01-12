@@ -1,23 +1,23 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: delivery-deployment
+  name: kafka-deployment
   namespace: oms
 spec:
-  replicas: 2
+  serviceName: kafka
   selector:
     matchLabels:
-      component: delivery
+      component: kafka
   template:
     metadata:
       labels:
-        component: delivery
+        component: kafka
     spec:
       containers:
-        - name: delivery
-          image: fenrisv/delivery:0.0.1
+        - name: kafka
+          image: bitnami/kafka:latest
           ports:
-            - containerPort: 8002
+            - containerPort: 9092
           envFrom:
             - configMapRef:
                 name: configs

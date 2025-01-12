@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: order-deployment
+  namespace: oms
 spec:
   replicas: 2
   selector:
@@ -17,18 +18,6 @@ spec:
           image: fenrisv/order:0.0.1
           ports:
             - containerPort: 8004
-          env:
-            - name: ORDER_DOMAIN
-              value: order-service
-            - name: DISCOVERY_DOMAIN
-              value: discovery-service
-            - name: ZIPKIN_DOMAIN
-              value: zipkin-service
-            - name: ADMIN_DOMAIN
-              value: actuator-service
-            - name: KAFKA_HOST
-              value: kafka-service
-            - name: MONGO_ORDER_HOST
-              value: order-mongo-service
-            - name: MONGO_ORDER_PORT
-              value: "27017"
+          envFrom:
+            - configMapRef:
+                name: configs
