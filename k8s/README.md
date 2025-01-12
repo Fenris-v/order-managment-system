@@ -17,11 +17,12 @@
 1. Установить Ingress:
 
    ```bash
-   helm upgrade --install ingress-nginx ingress-nginx   --repo https://kubernetes.github.io/ingress-nginx   --namespace ingress-nginx --create-namespace
+   helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
    ```
-2. Прежде всего необходимо развернуть манифест для создания ConfigMap:
+2. Прежде всего необходимо развернуть манифесты для создания неймспейсов и ConfigMap:
 
    ```bash   
+   kubectl apply -f k8s/namespaces
    kubectl apply -f k8s/config-map.yaml
    ```
 3. Далее порядок не столь важен и необходимо развернуть все остальные манифесты:
