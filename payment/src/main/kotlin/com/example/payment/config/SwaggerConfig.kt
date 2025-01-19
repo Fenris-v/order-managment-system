@@ -23,6 +23,7 @@ class SwaggerConfig(
     @Value("\${springdoc.domain}") private val domain: String,
     @Value("\${springdoc.prefix}") private val prefix: String
 ) {
+
     /**
      * Создает и настраивает экземпляр OpenAPI для использования с Swagger.
      *

@@ -11,6 +11,7 @@ import java.util.UUID
  * Репозиторий для взаимодействия с таблицей refresh_tokens в базе данных.
  */
 interface RefreshTokenRepository : ReactiveCrudRepository<RefreshToken, UUID> {
+
     /**
      * Ищет обновляющий токен по его значению.
      *
@@ -26,5 +27,5 @@ interface RefreshTokenRepository : ReactiveCrudRepository<RefreshToken, UUID> {
      * @param expireAt Дата, до которой истекает срок действия обновляющего токена.
      * @return Mono, завершающийся при успешном удалении обновляющих токенов.
      */
-    fun deleteAllByExpireAtBefore(expireAt: LocalDateTime = LocalDateTime.now()): Mono<Void>
+    fun deleteAllByExpireAtBefore(expireAt: LocalDateTime = LocalDateTime.now()): Mono<Unit>
 }

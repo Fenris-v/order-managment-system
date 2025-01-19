@@ -4,6 +4,7 @@ package com.example.payment.enums
  * Перечисление возможных статусов платежа.
  */
 enum class UPaymentStatus(val value: String) {
+
     /**
      * Платеж ожидает подтверждения
      */

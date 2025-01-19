@@ -16,17 +16,19 @@ class UserBalanceService(
     private val userBalanceRepository: UserBalanceRepository,
     private val jwtUtils: JwtUtils
 ) {
+
     /**
      * Добавляет деньги на баланс пользователя.
      *
      * @param userId идентификатор пользователя
      * @param amount сумма денег
      *
-     * @return Mono<Void>
+     * @return Mono<Unit>
      */
     @Transactional
-    fun topUpBalance(userId: Long, amount: Double): Mono<Void> {
+    fun topUpBalance(userId: Long, amount: Double): Mono<Unit> {
         return userBalanceRepository.topUpBalance(userId, amount)
+            .thenReturn(Unit)
     }
 
     /**
@@ -37,7 +39,7 @@ class UserBalanceService(
      * @return Mono<UserBalanceResponse>
      */
     fun getBalance(authorization: String): Mono<UserBalanceResponse> {
-        return Mono.just(jwtUtils.extractAllClaims(authorization))
+        return Mono.fromCallable { jwtUtils.extractAllClaims(authorization) }
             .flatMap { user ->
                 userBalanceRepository.findUserBalanceByUserId(user.id)
                     .map { UserBalanceResponse(it.amount ?: 0.0, it.updatedAt) }

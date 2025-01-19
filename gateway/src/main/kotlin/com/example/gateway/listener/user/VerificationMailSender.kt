@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class VerificationMailSender(private val mailService: MailService) {
+
     /**
      * Отправляет письмо новому пользователю для подтверждения его почтового адреса.
      */

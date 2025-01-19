@@ -5,7 +5,14 @@ import java.util.concurrent.Delayed
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
+/**
+ * Класс события доставки заказа.
+ *
+ * @param orderId Идентификатор заказа
+ * @param delaySeconds Имитация времени доставки
+ */
 class DeliveryEvent(val orderId: UUID, delaySeconds: Long = Random.nextLong(5, 20)) : Delayed {
+
     private val executeTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(delaySeconds)
 
     override fun getDelay(unit: TimeUnit): Long {

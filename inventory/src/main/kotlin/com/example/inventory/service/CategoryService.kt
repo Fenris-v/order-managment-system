@@ -12,13 +12,15 @@ import reactor.core.publisher.Mono
  */
 @Service
 class CategoryService(private val categoryRepository: CategoryRepository, private val modelMapper: ModelMapper) {
+
     /**
      * Возвращает список категорий.
      * @return Mono<CategoriesResponse>
      */
     fun getAllCategories(): Mono<CategoriesResponse> {
         return categoryRepository.findAllByOrderByName()
-            .flatMapSequential { Mono.just(modelMapper.map(it, CategoryResponse::class.java)) }.collectList()
+            .flatMapSequential { Mono.fromCallable { modelMapper.map(it, CategoryResponse::class.java) } }
+            .collectList()
             .map { CategoriesResponse(it) }
     }
 }

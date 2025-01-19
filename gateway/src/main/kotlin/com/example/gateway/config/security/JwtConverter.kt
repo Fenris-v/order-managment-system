@@ -26,6 +26,7 @@ private val log: KLogger = KotlinLogging.logger {}
  */
 @Component
 class JwtConverter(private val serverCodecConfigurer: ServerCodecConfigurer) : ServerAuthenticationConverter {
+
     private val authDtoType = ResolvableType.forClass(AuthDto::class.java)
 
     /**

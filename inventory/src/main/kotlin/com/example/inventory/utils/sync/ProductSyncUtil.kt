@@ -36,10 +36,15 @@ class ProductSyncUtil(
     private val productRepository: ProductRepository,
     private val categoryRepository: CategoryRepository
 ) {
+
+    companion object {
+        private const val CATEGORIES_COLLECTION: String = "categories"
+    }
+
     /**
      * Метод для синхронизации продуктов.
      */
-    fun syncProducts(): Mono<Void> {
+    fun syncProducts(): Mono<Unit> {
         val categoryMap: MutableMap<String, UUID> = HashMap()
 
         return categoryRepository.findAll().collectList()
@@ -55,7 +60,7 @@ class ProductSyncUtil(
 
                     Flux.concat(firstPageProcessing, remainingPagesProcessing)
                 }.then()
-            }
+            }.thenReturn(Unit)
     }
 
     private fun getPage(skip: Int = 0, limit: Int = 30): Mono<ProductDataResponse> {
@@ -72,12 +77,12 @@ class ProductSyncUtil(
             .bodyToMono(ProductDataResponse::class.java)
     }
 
-    private fun parseProducts(response: ProductDataResponse, categoryMap: Map<String, UUID>): ParallelFlux<Void> {
+    private fun parseProducts(response: ProductDataResponse, categoryMap: Map<String, UUID>): ParallelFlux<Unit> {
         return Flux.fromIterable(response.products).parallel().runOn(Schedulers.boundedElastic())
             .flatMap { processProduct(it, categoryMap) }
     }
 
-    private fun processProduct(response: ProductResponse, categoryMap: Map<String, UUID>): Mono<Void> {
+    private fun processProduct(response: ProductResponse, categoryMap: Map<String, UUID>): Mono<Unit> {
         return productRepository.findById(response.id).flatMap { product ->
             product.title = response.title
             product.price = CurrencyConverter.usdToRub(response.price)
@@ -87,7 +92,7 @@ class ProductSyncUtil(
         }.switchIfEmpty(createProduct(response, categoryMap)).onErrorResume {
             log.error(it) { it.message }
             Mono.error(it)
-        }.then()
+        }.thenReturn(Unit)
     }
 
     private fun createProduct(productResponse: ProductResponse, categoryMap: Map<String, UUID>): Mono<Product> {
@@ -105,7 +110,7 @@ class ProductSyncUtil(
     private fun getCategoriesForProduct(productResponse: ProductResponse, categoryMap: Map<String, UUID>): List<DBRef> {
         val categories: MutableList<DBRef> = ArrayList()
         if (categoryMap.containsKey(productResponse.category)) {
-            categories.add(DBRef("categories", categoryMap[productResponse.category]!!))
+            categories.add(DBRef(CATEGORIES_COLLECTION, categoryMap[productResponse.category] ?: ""))
         }
 
         return categories

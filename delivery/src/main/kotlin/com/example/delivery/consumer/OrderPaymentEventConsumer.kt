@@ -13,11 +13,22 @@ import reactor.core.publisher.Mono
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Класс для обработки события оплаты заказа.
+ *
+ * @param deliveryProcessor Компонент для обработки задач
+ */
 @Component
 class OrderPaymentEventConsumer(private val deliveryProcessor: DeliveryProcessor) {
+
+    /**
+     * Обработка события оплаты заказа. При успешном оплате, заказ отправляется на доставку.
+     *
+     * @param event Событие оплаты заказа
+     */
     @Transactional
     @KafkaListener(topics = ["\${spring.kafka.topic.payment}"], groupId = "\${spring.kafka.consumer.group-id}")
-    fun consumeEvent(event: OrderPaymentEvent): Mono<Void> {
+    fun consumeEvent(event: OrderPaymentEvent): Mono<Unit> {
         if (event.status == Status.PAID) {
             log.info { "Заказ оплачен, отправка заказа на доставку" }
             deliveryProcessor.submitTask(DeliveryEvent(event.orderId!!))

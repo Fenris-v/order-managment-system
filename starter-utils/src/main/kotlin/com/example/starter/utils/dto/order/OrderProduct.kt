@@ -3,6 +3,9 @@ package com.example.starter.utils.dto.order
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 
+/**
+ * Класс данных (DTO) для представления продукта в заказе.
+ */
 data class OrderProduct(
     @field:NotNull
     var productId: Long? = null,

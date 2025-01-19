@@ -2,9 +2,6 @@ server:
   port: 8004
 
 spring:
-  main:
-    allow-bean-definition-overriding: true
-
   application:
     name: order
 

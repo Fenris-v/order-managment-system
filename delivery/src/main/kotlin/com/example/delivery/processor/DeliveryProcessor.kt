@@ -15,23 +15,40 @@ import java.util.concurrent.Executors
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Класс для обработки задач доставки заказа.
+ *
+ * @param deliveryProducer Компонент для отправки сообщений о доставке
+ */
 @Component
 class DeliveryProcessor(private val deliveryProducer: DeliveryProducer) {
+
     private var running: Boolean = true
     private val delayQueue: DelayQueue<DeliveryEvent> = DelayQueue()
     private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
+    /**
+     * Пост-конструктор для инициализации компонента. Добавляет задачу на доставку заказа в очередь.
+     */
     @PostConstruct
     fun init() {
         executorService.submit(this::processTasks)
     }
 
+    /**
+     * Пред-деструктор для завершения компонента. Останавливает выполнение задач доставки заказа.
+     */
     @PreDestroy
     fun shutdown() {
         running = false
         executorService.shutdown()
     }
 
+    /**
+     * Добавляет задачу на доставку заказа в очередь.
+     *
+     * @param event Задача на доставку заказа
+     */
     fun submitTask(event: DeliveryEvent) {
         delayQueue.put(event)
         log.info { "Задача на доставку добавлена в очередь" }

@@ -23,6 +23,7 @@ private val log: KLogger = KotlinLogging.logger {}
 @Component
 class JWTServerAuthenticationFailureHandler(private val exceptionHandler: AuthorizationExceptionHandler) :
     ServerAuthenticationFailureHandler {
+
     /**
      * Обрабатывает событие сбоя аутентификации на сервере.
      *
@@ -42,5 +43,6 @@ class JWTServerAuthenticationFailureHandler(private val exceptionHandler: Author
             else HttpStatus.UNAUTHORIZED
 
         return exceptionHandler.handleAuthorizationException(exception.message!!, exchange, status)
+            .then()
     }
 }

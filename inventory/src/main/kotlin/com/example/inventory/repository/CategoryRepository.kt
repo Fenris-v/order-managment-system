@@ -10,6 +10,7 @@ import java.util.UUID
  * Интерфейс репозитория для работы с данными категорий.
  */
 interface CategoryRepository : ReactiveMongoRepository<Category, UUID> {
+
     /**
      * Проверяет, существует ли категория с указанным именем.
      * @param name Имя категории.

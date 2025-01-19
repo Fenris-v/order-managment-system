@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidatorContext
  * Проверяет существование пользователя с указанным email в БД.
  */
 class UserNotExistsValidator(private val userRepository: UserRepository) : ConstraintValidator<UserNotExists, String> {
+
     /**
      * Проверяет существование пользователя с указанным email в БД.
      *

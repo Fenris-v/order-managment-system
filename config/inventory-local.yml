@@ -1,3 +1,8 @@
+grpc:
+  server:
+    port: ${SECURITY_GRPC_PORT:9002}
+    reflectionServiceEnabled: false
+
 spring:
   data:
     mongodb:

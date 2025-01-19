@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono
 @Tag(name = "Безопасность")
 @RequestMapping("/api/v1/user/verify")
 class VerifyController(private val verifyService: VerifyService) {
+
     /**
      * Подтвердить пользователя по токену из ссылки в письме.
      *

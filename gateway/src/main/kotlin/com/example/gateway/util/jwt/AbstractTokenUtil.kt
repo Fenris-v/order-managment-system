@@ -20,6 +20,7 @@ import javax.crypto.SecretKey
  * Абстрактный класс для утилиты работы с токенами.
  */
 abstract class AbstractTokenUtil : TokenUtil {
+
     /**
      * Получение срока жизни токена.
      *

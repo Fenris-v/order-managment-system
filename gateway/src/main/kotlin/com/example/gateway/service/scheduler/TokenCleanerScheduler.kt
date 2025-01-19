@@ -18,6 +18,7 @@ class TokenCleanerScheduler(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val databaseClient: DatabaseClient
 ) {
+
     /**
      * Метод для очистки устаревших Access и Refresh токенов. Вызывается каждый час.
      */

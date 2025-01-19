@@ -17,6 +17,7 @@ class AppStartedListener(
     private val transactionRepository: TransactionRepository,
     private val paymentProcessor: PaymentProcessor
 ) : ApplicationListener<ApplicationReadyEvent> {
+
     /**
      * Метод для обработки события старта приложения. На старте приложения добавляет в очередь платежи, которые
      * находятся в статусе PENDING.
@@ -26,10 +27,9 @@ class AppStartedListener(
     override fun onApplicationEvent(event: ApplicationReadyEvent) {
         transactionRepository.findTransactionsByStatus(UPaymentStatus.PENDING)
             .concatMap {
-                Mono.just(
-                    paymentProcessor
-                        .submitTask(PaymentEvent(it.paymentId!!, expiryAt = it.createdAt.plusHours(1)))
-                )
+                Mono.fromCallable {
+                    paymentProcessor.submitTask(PaymentEvent(it.paymentId!!, expiryAt = it.createdAt.plusHours(1)))
+                }
             }
             .subscribe()
     }
