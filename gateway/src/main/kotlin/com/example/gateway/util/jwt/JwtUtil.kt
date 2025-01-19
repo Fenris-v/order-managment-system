@@ -14,6 +14,7 @@ class JwtUtil(
     @Value("\${app.auth.jwt.secret}") private val secret: String,
     @Value("\${app.auth.jwt.expiration}") private val expiration: Duration
 ) : AbstractTokenUtil(), TokenUtil {
+
     override fun getExpiration(): Duration {
         return expiration
     }

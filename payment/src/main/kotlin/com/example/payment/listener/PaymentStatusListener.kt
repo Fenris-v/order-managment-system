@@ -16,6 +16,7 @@ private val log: KLogger = KotlinLogging.logger {}
  */
 @Component
 class PaymentStatusListener(private val paymentProcessor: PaymentProcessor) {
+
     /**
      * Метод слушает события платежей и передает их в процессор платежей для проверки статуса.
      *

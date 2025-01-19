@@ -15,11 +15,12 @@ import org.thymeleaf.context.Context
 @Service
 class MailService(
     private val javaMailSender: JavaMailSender,
-    private val templateEngine: TemplateEngine,
+    private val customTemplateEngine: TemplateEngine,
     @Value("\${spring.mail.email}") private val email: String,
     @Value("\${spring.mail.name}") private val name: String,
     @Value("\${app.domain}") private val domain: String
 ) {
+
     companion object {
         private const val ENCODING = "UTF-8"
         private const val VERIFY_SUBJECT = "Подтверждение регистрации"
@@ -64,7 +65,7 @@ class MailService(
         context.setVariable("password", password)
         context.setVariable("subject", PASSWORD_RESET_SUBJECT)
 
-        return templateEngine.process("password_reset_email", context)
+        return customTemplateEngine.process("password_reset_email", context)
     }
 
     /**
@@ -82,7 +83,7 @@ class MailService(
         context.setVariable("href", String.format(VERIFY_URI, domain, token))
         context.setVariable("subject", VERIFY_SUBJECT)
 
-        return templateEngine.process("verified_email", context)
+        return customTemplateEngine.process("verified_email", context)
     }
 
     /**
@@ -101,6 +102,6 @@ class MailService(
         context.setVariable("subject", VERIFY_SUBJECT)
         context.setVariable("email", email)
 
-        return templateEngine.process("change_email", context)
+        return customTemplateEngine.process("change_email", context)
     }
 }

@@ -20,6 +20,7 @@ import reactor.core.publisher.Mono
  */
 @RestController
 class ProductController(private val productService: ProductService) {
+
     /**
      * Возвращает продукт по его идентификатору
      * @param productId идентификатор продукта

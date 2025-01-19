@@ -27,6 +27,7 @@ import reactor.core.publisher.Mono
 @Tag(name = "Пользователь")
 @RequestMapping("/api/v1/user")
 class UserController(private val userService: UserDetailsService) {
+
     /**
      * Получить текущего пользователя.
      *

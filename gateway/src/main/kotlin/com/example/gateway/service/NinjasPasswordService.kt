@@ -15,6 +15,7 @@ class NinjasPasswordService(
     @Value("\${app.ninjas.base-url}") private val baseUrl: String,
     private val httpUtil: HttpUtil
 ) {
+
     companion object {
         private const val PASSWORD_LENGTH = 16
         private const val GENERATOR_API_URL = "%s%s?length=%d"

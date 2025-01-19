@@ -18,6 +18,7 @@ private val log: KLogger = KotlinLogging.logger {}
  */
 @ControllerAdvice
 class CustomExceptionHandler : AbstractExceptionHandler() {
+
     /**
      * Обрабатывает исключение ThrottleException и возвращает ответ с кодом 403 и информацией об ошибке.
      *

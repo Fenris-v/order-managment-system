@@ -16,6 +16,10 @@ class SMTPMailConfig(
     @Value("\${spring.mail.email}") private val email: String,
     @Value("\${spring.mail.password}") private val password: String
 ) {
+
+    /**
+     * Создает экземпляр [JavaMailSender] для отправки почтовых сообщений через SMTP.
+     */
     @Bean
     fun javaMailSender(): JavaMailSender {
         val mailSender = JavaMailSenderImpl()

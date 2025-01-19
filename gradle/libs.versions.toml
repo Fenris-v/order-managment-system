@@ -3,6 +3,8 @@ springBootVersion = "3.1.5"
 springCloudVersion = "4.0.3"
 springGatewayVersion = "4.0.6"
 
+mongoVersion = "3.3.2"
+
 starterUtilsVersion = "0.0.1-SNAPSHOT"
 
 grpcStarterVersion = "3.1.0.RELEASE"
@@ -16,6 +18,10 @@ jjwtVersion = "0.12.3"
 postgresVersion = "42.7.2"
 r2dbcVersion = "1.0.2.RELEASE"
 liquibaseVersion = "4.23.0"
+
+springKafkaVersion = "3.2.4"
+
+modelMapperVersion = "3.2.1"
 
 springDocVersion = "2.6.0"
 
@@ -66,6 +72,12 @@ r2dbc = { module = "org.postgresql:r2dbc-postgresql", version.ref = "r2dbcVersio
 springR2dbc = { module = "org.springframework.data:spring-data-r2dbc", version.ref = "springBootVersion" }
 liquibase = { module = "org.liquibase:liquibase-core", version.ref = "liquibaseVersion" }
 jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc", version.ref = "springBootVersion" }
+
+mongo = { module = "org.springframework.boot:spring-boot-starter-data-mongodb-reactive", version.ref = "mongoVersion" }
+
+springKafka = { module = "org.springframework.kafka:spring-kafka", version.ref = "springKafkaVersion" }
+
+modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "modelMapperVersion" }
 
 swagger = { module = "org.springdoc:springdoc-openapi-starter-webflux-ui", version.ref = "springDocVersion" }
 

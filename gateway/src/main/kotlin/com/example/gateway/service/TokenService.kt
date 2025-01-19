@@ -33,6 +33,7 @@ class TokenService(
     private val accessTokenRepository: AccessTokenRepository,
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
+
     /**
      * Генерирует пару токенов доступа и обновления для пользователя.
      *

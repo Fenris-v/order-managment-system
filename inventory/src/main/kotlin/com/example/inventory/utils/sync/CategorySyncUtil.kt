@@ -25,10 +25,11 @@ class CategorySyncUtil(
     private val webClient: WebClient,
     private val categoryRepository: CategoryRepository
 ) {
+
     /**
      * Метод для синхронизации категорий.
      */
-    fun syncCategories(): Mono<Void> {
+    fun syncCategories(): Mono<Unit> {
         return webClient.get()
             .uri { it.scheme(scheme).host(host).path("/products/categories").build() }
             .retrieve()
@@ -37,16 +38,17 @@ class CategorySyncUtil(
             .runOn(Schedulers.boundedElastic())
             .flatMap { processCategory(it) }
             .then()
+            .thenReturn(Unit)
     }
 
-    private fun processCategory(category: CategoryResponse): Mono<Void> {
+    private fun processCategory(category: CategoryResponse): Mono<Unit> {
         return categoryRepository
             .existsByName(category.name)
             .flatMap { exists ->
                 if (exists) Mono.empty()
                 else categoryRepository.save(Category(UUID.randomUUID(), category.name, category.slug))
             }
-            .then()
+            .thenReturn(Unit)
     }
 }
 

@@ -26,8 +26,7 @@ repositories {
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation(project(":starter-utils")) // TODO: заменить на nexus
-//    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
+    implementation(project(":starter-utils"))
 
     versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
 

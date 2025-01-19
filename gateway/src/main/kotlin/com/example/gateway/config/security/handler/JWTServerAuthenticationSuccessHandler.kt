@@ -28,6 +28,7 @@ class JWTServerAuthenticationSuccessHandler(
     private val objectMapper: ObjectMapper,
     private val tokenService: TokenService
 ) : ServerAuthenticationSuccessHandler {
+
     /**
      * Обрабатывает успешную аутентификацию и формирует ответ с JWT-токенами.
      *

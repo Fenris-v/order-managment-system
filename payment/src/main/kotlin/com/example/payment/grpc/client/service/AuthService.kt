@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class AuthService {
+
     @GrpcClient("securityServer")
     private val stub: AuthServiceGrpc.AuthServiceBlockingStub? = null
 

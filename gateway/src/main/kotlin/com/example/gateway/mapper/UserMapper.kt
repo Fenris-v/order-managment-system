@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class UserMapper {
+
     /**
      * Преобразование сущности {@link User} в представление {@link UserDto}.
      */

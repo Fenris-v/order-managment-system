@@ -9,6 +9,7 @@ import java.util.Base64
  * Класс-утилита для работы с JWT.
  */
 class JwtUtils(private val objectMapper: ObjectMapper) {
+
     companion object {
         const val BEARER: String = "Bearer "
     }

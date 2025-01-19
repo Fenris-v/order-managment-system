@@ -26,6 +26,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/payment")
 class PaymentController(private val uMoneyPaymentService: UMoneyPaymentService) {
+
     /**
      * Метод для получения ссылки на оплату.
      * @param request Запрос на получение ссылки на оплату.

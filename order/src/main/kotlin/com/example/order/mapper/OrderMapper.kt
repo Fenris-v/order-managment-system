@@ -9,8 +9,19 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.UUID
 
+/**
+ * Класс для преобразования OrderRequest в Order.
+ */
 @Component
 class OrderMapper(private val modelMapper: ModelMapper) {
+
+    /**
+     * Преобразует OrderRequest в Order.
+     *
+     * @param orderRequest OrderRequest
+     * @param userId       Id пользователя
+     * @return Order
+     */
     fun mapOrderRequestToOrder(orderRequest: OrderRequest, userId: Long): Order {
         return Order(
             UUID.randomUUID(),

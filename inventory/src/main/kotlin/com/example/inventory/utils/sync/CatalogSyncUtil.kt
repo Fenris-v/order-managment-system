@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono
 @Lazy
 @Component
 class CatalogSyncUtil(private val categorySyncUtil: CategorySyncUtil, private val productSyncUtil: ProductSyncUtil) {
+
     /**
      * Метод для синхронизации каталога.
      */

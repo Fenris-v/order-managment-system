@@ -17,6 +17,7 @@ class AppStartedListener(
     private val productRepository: ProductRepository,
     private val catalogSync: CatalogSync
 ) : ApplicationListener<ApplicationReadyEvent> {
+
     /**
      * Листенер при старте приложения, который проверяет наполненность каталога и запускает синхронизацию в случае
      * необходимости.
@@ -26,7 +27,7 @@ class AppStartedListener(
     override fun onApplicationEvent(event: ApplicationReadyEvent) {
         Mono.zip(categoryRepository.existsBy(), productRepository.existsBy())
             .flatMap { tuple ->
-                if (!tuple.t1 || !tuple.t2) Mono.just(catalogSync.sync())
+                if (!tuple.t1 || !tuple.t2) Mono.fromCallable { catalogSync.sync() }
                 else Mono.empty()
             }
             .subscribe()

@@ -34,6 +34,7 @@ import reactor.core.publisher.Mono
 @Tag(name = "Безопасность")
 @RequestMapping("/api/v1/user")
 class SecurityController(private val userService: UserDetailsService) {
+
     /**
      * Выполняет регистрацию нового пользователя.
      *

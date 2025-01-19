@@ -21,6 +21,7 @@ private val log: KLogger = KotlinLogging.logger {}
  * соответствующие ответы с информацией об ошибке.
  */
 abstract class AbstractExceptionHandler {
+
     /**
      * Обрабатывает исключение ForbiddenException и возвращает ответ с кодом 403 и информацией об ошибке.
      *

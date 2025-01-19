@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono
 @GrpcService
 class AuthService(private val jwtUtils: JwtUtils, private val userRepository: UserRepository) :
     AuthServiceGrpc.AuthServiceImplBase() {
+
     /**
      * Получение пользователя по JWT-токену или id.
      *
@@ -23,7 +24,7 @@ class AuthService(private val jwtUtils: JwtUtils, private val userRepository: Us
      * @param responseObserver Ответ на запрос.
      */
     override fun getUser(request: UserRequest, responseObserver: StreamObserver<UserResponse?>) {
-        Mono.just(if (request.jwt.isNotBlank()) jwtUtils.extractAllClaims(request.jwt).id else request.id)
+        Mono.fromCallable { if (request.jwt.isNotBlank()) jwtUtils.extractAllClaims(request.jwt).id else request.id }
             .flatMap { userRepository.findById(it) }
             .switchIfEmpty(Mono.error(EntityNotFoundException()))
             .map {

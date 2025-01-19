@@ -10,11 +10,20 @@ import org.springframework.stereotype.Component
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Процессор для отправки событий о создании заказа.
+ */
 @Component
-class OrderProcessor(
+class OrderProducer(
     private val kafkaTemplate: KafkaTemplate<String, OrderRegisteredEvent>,
     @Value("\${spring.kafka.topic.orders}") private val topic: String
 ) {
+
+    /**
+     * Отправляет событие о создании заказа.
+     *
+     * @param order Заказ
+     */
     fun process(order: Order) {
         val orderRegisteredEvent = OrderRegisteredEvent(order.id, order.userId, order.products)
         kafkaTemplate.send(topic, orderRegisteredEvent)

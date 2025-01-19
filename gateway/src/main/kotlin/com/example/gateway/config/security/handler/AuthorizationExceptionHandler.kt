@@ -22,6 +22,7 @@ private val log: KLogger = KotlinLogging.logger {}
  */
 @Component
 class AuthorizationExceptionHandler(private val objectMapper: ObjectMapper) {
+
     /**
      * Обрабатывает исключение авторизации и формирует соответствующий ответ с кодом состояния и сообщением об ошибке.
      *
@@ -30,7 +31,7 @@ class AuthorizationExceptionHandler(private val objectMapper: ObjectMapper) {
      * @param status   код состояния HTTP, связанный с ошибкой авторизации
      * @return Mono, представляющий завершение обработки и формирование ответа
      */
-    fun handleAuthorizationException(message: String, exchange: ServerWebExchange, status: HttpStatusCode): Mono<Void> {
+    fun handleAuthorizationException(message: String, exchange: ServerWebExchange, status: HttpStatusCode): Mono<Unit> {
         try {
             val dto = ExceptionDto(message, status.value())
             val response = exchange.response
@@ -39,7 +40,7 @@ class AuthorizationExceptionHandler(private val objectMapper: ObjectMapper) {
             response.setStatusCode(status)
             val dataBuffer: DataBuffer = response.bufferFactory().wrap(objectMapper.writeValueAsBytes(dto))
 
-            return response.writeWith(Mono.just(dataBuffer))
+            return response.writeWith(Mono.just(dataBuffer)).thenReturn(Unit)
         } catch (ex: Exception) {
             log.error(ex) { "JWT exception" }
             throw JsonParseException()

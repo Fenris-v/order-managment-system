@@ -13,6 +13,7 @@ import org.springframework.web.server.adapter.WebHttpHandlerBuilder
  */
 @Configuration
 class HttpHandlerConfiguration {
+
     /**
      * Создает и настраивает обработчик HTTP-запросов.
      *

@@ -12,6 +12,7 @@ import java.util.UUID
  * Интерфейс репозитория для работы с данными о продуктах.
  */
 interface ProductRepository : ReactiveMongoRepository<Product, Long> {
+
     /**
      * Проверяет, существует ли хотя бы один продукт.
      * @return true, если существует хотя бы один продукт, false в противном случае.
