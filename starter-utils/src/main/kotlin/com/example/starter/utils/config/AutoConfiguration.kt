@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 @Configuration
 @ConditionalOnProperty(name = ["starter.utils.enabled"], havingValue = "true", matchIfMissing = true)
 class AutoConfiguration {
+
     /**
      * Создает и настраивает WebClient.
      *

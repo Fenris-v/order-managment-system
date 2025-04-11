@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/categories")
 class CategoryController(private val categoryService: CategoryService) {
+
     /**
      * Метод для получения списка категорий
      * @return Mono<CategoriesResponse>

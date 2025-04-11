@@ -13,6 +13,7 @@ class RefreshTokenUtil(
     @Value("\${app.auth.refresh.secret}") private val secret: String,
     @Value("\${app.auth.refresh.expiration}") private val expiration: Duration
 ) : AbstractTokenUtil(), TokenUtil {
+
     override fun getExpiration(): Duration {
         return expiration
     }

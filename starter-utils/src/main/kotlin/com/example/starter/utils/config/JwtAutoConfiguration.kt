@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @ConditionalOnProperty(name = ["starter.utils.jwt"], havingValue = "true")
 class JwtAutoConfiguration {
+
     /**
      * Регистрирует бин ClaimsUtils.
      *

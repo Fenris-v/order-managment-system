@@ -38,6 +38,7 @@ class SecurityConfig(
     @Value("\${security.excluded.get}") private val excludedGetPaths: Array<String>,
     @Value("\${security.excluded.post}") private val excludedPostPaths: Array<String>
 ) : WebFluxConfigurer {
+
     companion object {
         const val BEARER: String = "Bearer "
     }
@@ -87,11 +88,13 @@ class SecurityConfig(
                 it.authenticationEntryPoint { exchange: ServerWebExchange, ex: AuthenticationException? ->
                     exceptionHandler
                         .handleAuthorizationException(ex?.message ?: "Unauthorized", exchange, HttpStatus.UNAUTHORIZED)
+                        .then()
                 }
 
                 it.accessDeniedHandler { exchange: ServerWebExchange, ex: AccessDeniedException? ->
                     exceptionHandler
                         .handleAuthorizationException(ex?.message ?: "Forbidden", exchange, HttpStatus.FORBIDDEN)
+                        .then()
                 }
             }
 

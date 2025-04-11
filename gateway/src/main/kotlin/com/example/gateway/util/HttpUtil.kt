@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono
  */
 @Component
 class HttpUtil(private val client: WebClient) {
+
     /**
      * Метод для выполнения GET-запроса.
      *

@@ -28,6 +28,7 @@ class ProductService(
     private val productRepository: ProductRepository,
     private val categoryRepository: CategoryRepository
 ) {
+
     /**
      * Метод для получения продукта по идентификатору.
      * @param id Идентификатор продукта.
@@ -70,5 +71,9 @@ class ProductService(
                         ProductListResponse(tuple.t1, category, totalPages, tuple.t2, page)
                     }
             }
+    }
+
+    fun getProductsByIdList(idsList: List<Long>): Flux<Product> {
+        return productRepository.findAllById(idsList)
     }
 }

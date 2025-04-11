@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class ProductMapper(private val modelMapper: ModelMapper) {
+
     /**
      * Метод для преобразования сущности {@link Product} в представление {@link ProductResponseWithCategories}.
      *

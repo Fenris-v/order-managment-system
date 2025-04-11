@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono
  * Репозиторий для взаимодействия с таблицей пользователей в базе данных.
  */
 interface UserRepository : ReactiveCrudRepository<User, Long> {
+
     /**
      * Ищет пользователя по электронной почте (без учета регистра).
      *

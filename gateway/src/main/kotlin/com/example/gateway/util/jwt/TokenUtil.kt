@@ -6,7 +6,8 @@ import java.util.UUID
 /**
  * Интерфейс для утилиты работы с токенами.
  */
-interface TokenUtil {
+fun interface TokenUtil {
+
     /**
      * Генерация токена для конкретного пользователя.
      *

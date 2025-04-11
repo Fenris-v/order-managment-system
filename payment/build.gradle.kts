@@ -25,9 +25,7 @@ repositories {
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation("org.springframework.kafka:spring-kafka:3.2.4")
-    implementation(project(":starter-utils")) // TODO: заменить на nexus
-//    versionCatalog.findLibrary("starterUtils").ifPresent { implementation(it) }
+    implementation(project(":starter-utils"))
 
     versionCatalog.findBundle("spring").ifPresent { implementation(it) }
     versionCatalog.findBundle("grpc").ifPresent { implementation(it) }
@@ -35,6 +33,7 @@ dependencies {
     versionCatalog.findBundle("postgres").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springValidation").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springJpa").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("springKafka").ifPresent { implementation(it) }
 
     versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
 

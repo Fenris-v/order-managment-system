@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/user/balance")
 class UserBalanceController(private val userBalanceService: UserBalanceService) {
+
     /**
      * Метод для получения баланса пользователя.
      *

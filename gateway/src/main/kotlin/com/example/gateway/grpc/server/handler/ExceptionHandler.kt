@@ -11,6 +11,7 @@ import net.devh.boot.grpc.server.advice.GrpcExceptionHandler
  */
 @GrpcAdvice
 class ExceptionHandler {
+
     /**
      * Обрабатывает исключение EntityNotFoundException и возвращает статус 5.
      *

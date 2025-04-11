@@ -14,6 +14,7 @@ private val log: KLogger = KotlinLogging.logger {}
  */
 @Component
 class UnverifiedUsersCleaner(private val databaseClient: DatabaseClient) {
+
     /**
      * Метод для очистки неподтвержденных пользователей. Вызывается каждый час.
      */

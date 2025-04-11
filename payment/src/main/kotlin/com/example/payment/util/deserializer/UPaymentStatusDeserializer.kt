@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer
  * во внутренние значения.
  */
 class UPaymentStatusDeserializer : JsonDeserializer<UPaymentStatus>() {
+
     /**
      * Метод десериализации. Обрабатывает статусы из ответа API UMoney и преобразует их
      * во внутренние значения.

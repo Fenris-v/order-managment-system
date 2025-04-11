@@ -54,6 +54,7 @@ class UMoneyPaymentService(
     private val eventPublisher: ApplicationEventPublisher,
     private val transactionRepository: TransactionRepository
 ) {
+
     companion object {
         private const val PRODUCT_DESCRIPTION = "Пополнение баланса"
         private const val IDEMPOTENCY_KEY_HEADER = "Idempotence-Key"
@@ -69,7 +70,7 @@ class UMoneyPaymentService(
      * @return история платежей
      */
     fun getHistory(authorization: String, page: Int, size: Int): Mono<HistoryResponse> {
-        return Mono.just(jwtUtils.extractAllClaims(authorization))
+        return Mono.fromCallable { jwtUtils.extractAllClaims(authorization) }
             .flatMap { user ->
                 transactionRepository.getTransactionHistory(user.id, size, page * size)
                     .flatMap { Mono.just(TransactionResponse(it.amount!!, it.status!!, it.createdAt, it.updatedAt)) }
@@ -99,7 +100,7 @@ class UMoneyPaymentService(
      * @param paymentId идентификатор платежа
      */
     @Transactional
-    fun cancelTransaction(paymentId: UUID): Mono<Void> {
+    fun cancelTransaction(paymentId: UUID): Mono<Unit> {
         return transactionRepository.updateStatusByPaymentId(UPaymentStatus.CANCELED.name, paymentId)
     }
 
@@ -109,7 +110,7 @@ class UMoneyPaymentService(
      * @param paymentId идентификатор платежа
      */
     @Transactional
-    fun processSucceedTransaction(paymentId: UUID): Mono<Void> {
+    fun processSucceedTransaction(paymentId: UUID): Mono<Unit> {
         return transactionRepository.findTransactionByPaymentId(paymentId)
             .flatMap { transaction ->
                 transaction.status = UPaymentStatus.SUCCEEDED
@@ -125,7 +126,7 @@ class UMoneyPaymentService(
      */
     @Transactional
     fun getPaymentLink(authorization: String, request: PaymentRequest): Mono<PaymentResponse> {
-        return Mono.just(authService.getUser(jwtUtils.cutBearer(authorization)))
+        return Mono.fromCallable { authService.getUser(jwtUtils.cutBearer(authorization)) }
             .flatMap { user ->
                 val transaction: Transaction = createTransaction(request, user)
                 executeUMoneyRequest(request, transaction, user)
@@ -167,7 +168,7 @@ class UMoneyPaymentService(
             .contentType(MediaType.APPLICATION_JSON)
             .headers {
                 it.setBasicAuth(shopId, apiKey)
-                it.set(IDEMPOTENCY_KEY_HEADER, transaction.idempotenceKey.toString())
+                it[IDEMPOTENCY_KEY_HEADER] = transaction.idempotenceKey.toString()
             }
             .body(BodyInserters.fromValue(getUMoneyPaymentRequest(request, user)))
             .retrieve()

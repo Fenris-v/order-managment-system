@@ -5,16 +5,17 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.reactivestreams.client.MongoClient
 import com.mongodb.reactivestreams.client.MongoClients
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.mongodb.ReactiveMongoDatabaseFactory
-import org.springframework.data.mongodb.ReactiveMongoTransactionManager
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
 
+/**
+ * Конфигурационный класс для настройки работы с MongoDB.
+ */
 @Configuration
 @EnableReactiveMongoRepositories(basePackages = ["com.example.inventory.repository"])
 class MongoConfig(private val mongoProperties: MongoProperties) : AbstractReactiveMongoConfiguration() {
+
     // TODO: Реплицирование отключено, но без него не работают транзакции
     override fun reactiveMongoClient(): MongoClient {
         val connectionString = String.format(
@@ -39,10 +40,5 @@ class MongoConfig(private val mongoProperties: MongoProperties) : AbstractReacti
 
     override fun getDatabaseName(): String {
         return mongoProperties.database
-    }
-
-    @Bean
-    fun transactionManager(reactiveMongoDatabaseFactory: ReactiveMongoDatabaseFactory?): ReactiveMongoTransactionManager {
-        return ReactiveMongoTransactionManager(reactiveMongoDatabaseFactory!!)
     }
 }

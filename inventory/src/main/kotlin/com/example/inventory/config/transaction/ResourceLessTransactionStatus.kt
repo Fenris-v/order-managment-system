@@ -2,6 +2,9 @@ package com.example.inventory.config.transaction
 
 import org.springframework.transaction.TransactionStatus
 
+/**
+ * Класс для настройки статусов MongoDB при работе без транзакций.
+ */
 class ResourceLessTransactionStatus : TransactionStatus {
     override fun isNewTransaction(): Boolean {
         return false
@@ -21,11 +24,17 @@ class ResourceLessTransactionStatus : TransactionStatus {
         return Any()
     }
 
-    override fun rollbackToSavepoint(savepoint: Any) {}
+    override fun rollbackToSavepoint(savepoint: Any) {
+        // no-op
+    }
 
-    override fun releaseSavepoint(savepoint: Any) {}
+    override fun releaseSavepoint(savepoint: Any) {
+        // no-op
+    }
 
-    override fun flush() {}
+    override fun flush() {
+        // no-op
+    }
 
     override fun hasSavepoint(): Boolean {
         return false

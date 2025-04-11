@@ -1,3 +1,5 @@
+import com.google.protobuf.gradle.id
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,6 +7,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.3"
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
+
+    id("com.google.protobuf") version "0.9.4"
 }
 
 group = "com.example.order"
@@ -21,14 +25,17 @@ repositories {
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.2")
-    implementation("org.springframework.kafka:spring-kafka:3.2.4")
-    implementation("org.modelmapper:modelmapper:3.2.1")
+    implementation(project(":starter-utils"))
 
-    implementation(project(":starter-utils")) // TODO: заменить на nexus
+    versionCatalog.findBundle("grpc").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("grpcClient").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("spring").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springValidation").ifPresent { implementation(it) }
+
+    versionCatalog.findLibrary("springKafka").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("mongo").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("modelmapper").ifPresent { implementation(it) }
 
     versionCatalog.findLibrary("swagger").ifPresent { implementation(it) }
 
@@ -52,4 +59,38 @@ tasks.withType<Test> {
 
 tasks.bootJar {
     archiveFileName.set("order.jar")
+}
+
+tasks.withType<KotlinCompile> {
+    dependsOn("generateProto")
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.27.3"
+    }
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.65.1"
+        }
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.plugins {
+                id("grpc")
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir("../proto")
+        }
+    }
 }

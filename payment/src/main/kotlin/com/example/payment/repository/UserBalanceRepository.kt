@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono
  * Интерфейс репозитория для работы с данными о балансе пользователя.
  */
 interface UserBalanceRepository : ReactiveCrudRepository<UserBalance, Long> {
+
     /**
      * Добавляет деньги на баланс пользователя.
      */
@@ -18,7 +19,7 @@ interface UserBalanceRepository : ReactiveCrudRepository<UserBalance, Long> {
         ON CONFLICT (user_id) DO UPDATE SET amount = user_balances.amount + :amount, updated_at = CURRENT_TIMESTAMP
         """
     )
-    fun topUpBalance(userId: Long, amount: Double): Mono<Void>
+    fun topUpBalance(userId: Long, amount: Double): Mono<Unit>
 
     /**
      * Находит баланс пользователя по его идентификатору.

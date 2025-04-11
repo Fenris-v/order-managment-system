@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package product;
+
+option java_package = "com.example.product";
+option java_multiple_files = true;
+
+message ShortProductsRequest {
+  repeated uint64 ids = 1;
+}
+
+message ShortProduct {
+  uint64 id = 1;
+  string title = 2;
+}
+
+service ProductService {
+  rpc GetProductsByIdList(ShortProductsRequest) returns (stream ShortProduct);
+}

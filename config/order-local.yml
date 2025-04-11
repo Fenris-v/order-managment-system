@@ -1,3 +1,9 @@
+grpc:
+  client:
+    productServer:
+      address: static://${SECURITY_GRPC_HOST:localhost}:${SECURITY_GRPC_PORT:9002}
+      negotiationType: PLAINTEXT
+
 spring:
   data:
     mongodb:

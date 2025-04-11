@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class CatalogSync(private val context: ApplicationContext) {
+
     /**
      * Выполняет синхронизацию каталога в заданный период.
      */

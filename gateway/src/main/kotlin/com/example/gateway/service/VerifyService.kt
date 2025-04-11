@@ -18,8 +18,12 @@ import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.Base64
 
+/**
+ * Сервис для работы с подтверждением пользовательских email адресов.
+ */
 @Service
 class VerifyService(private val mailService: MailService, private val userRepository: UserRepository) {
+
     companion object {
         private const val TOKEN_TTL = 60L
     }
@@ -39,7 +43,7 @@ class VerifyService(private val mailService: MailService, private val userReposi
      * @return Моно без результата
      */
     @Transactional
-    fun verify(token: String): Mono<Void> {
+    fun verify(token: String): Mono<Unit> {
         if (token.isEmpty()) {
             return Mono.error(UnauthorizedException())
         }
@@ -72,7 +76,7 @@ class VerifyService(private val mailService: MailService, private val userReposi
      * @return Моно без результата.
      */
     @Transactional
-    fun sendChangeEmailLetter(user: User, newEmail: String): Mono<Void> {
+    fun sendChangeEmailLetter(user: User, newEmail: String): Mono<Unit> {
         user.confirmationToken = getVerifyTokenString(user.email, newEmail)
         return userRepository.save(user)
             .then(Mono.fromRunnable { mailService.sendChangeEmailLetter(user, newEmail) })
@@ -85,29 +89,29 @@ class VerifyService(private val mailService: MailService, private val userReposi
      * @return Моно без результата
      */
     @Transactional
-    fun sendVerifyEmail(verifyDto: VerifyDto): Mono<Void> {
+    fun sendVerifyEmail(verifyDto: VerifyDto): Mono<Unit> {
         return userRepository.findUserByEmailIgnoreCase(verifyDto.email)
             .flatMap {
                 when {
                     it !is User -> Mono.error<JwtResponse>(BadRequestException())
-                    it.verifiedAt != null -> Mono.error<Void>(ForbiddenException("Пользователь ${it.email} уже подтверждён"))
+                    it.verifiedAt != null -> Mono.error<Unit>(ForbiddenException("Пользователь ${it.email} уже подтверждён"))
                     it.confirmationToken != null -> handleWhenConfirmationTokenExist(it)
                     else -> sendVerifyEmail(it)
                 }
             }
-            .then()
+            .thenReturn(Unit)
     }
 
-    private fun handleWhenConfirmationTokenExist(user: User): Mono<Void> {
+    private fun handleWhenConfirmationTokenExist(user: User): Mono<Unit> {
         val decodedString = String(Base64.getDecoder().decode(user.confirmationToken))
         val verifyToken: VerifyToken = Json.decodeFromString(decodedString)
         val isThrottlePass: Boolean = VerifyToken.getExpiresDateTime(verifyToken)
             .isBefore(LocalDateTime.now().plusMinutes(TOKEN_TTL - 1))
 
-        return if (isThrottlePass) sendVerifyEmail(user) else Mono.error(ThrottleException())
+        return if (isThrottlePass) sendVerifyEmail(user).thenReturn(Unit) else Mono.error(ThrottleException())
     }
 
-    private fun sendVerifyEmail(user: User): Mono<Void> {
+    private fun sendVerifyEmail(user: User): Mono<Unit> {
         user.confirmationToken = getVerifyTokenString(user.email)
         return userRepository.save(user)
             .then(Mono.fromRunnable { mailService.sendVerifyMail(user) })

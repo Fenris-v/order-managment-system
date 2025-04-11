@@ -17,14 +17,24 @@ import reactor.core.publisher.Mono
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Класс для обработки событий резервирования товаров.
+ */
 @Component
 class ItemsReservedEventConsumer(
     private val userBalanceRepository: UserBalanceRepository,
     private val paymentEventProducer: PaymentEventProducer
 ) {
+
+    /**
+     * Слушает события резервирования товаров и выполняет оплату заказа.
+     *
+     * @param event Событие резервирования товаров.
+     * @return Mono<Unit>
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @KafkaListener(topics = ["\${spring.kafka.topic.inventory}"], groupId = "\${spring.kafka.consumer.group-id}")
-    fun consumeEvent(event: ItemsReservedEvent): Mono<Void> {
+    fun consumeEvent(event: ItemsReservedEvent): Mono<Unit> {
         log.info { "Получено событие: $event" }
         val price: Int = calculateTotalPrice(event.products!!)
 
@@ -43,6 +53,7 @@ class ItemsReservedEventConsumer(
                 log.error(it) { it.message }
                 paymentEventProducer.send(makeOrderPaymentEvent(event, Status.PAYMENT_FAILED))
             }
+            .thenReturn(Unit)
     }
 
     private fun calculateTotalPrice(products: List<OrderProduct>): Int {

@@ -25,6 +25,7 @@ private val log: KLogger = KotlinLogging.logger {}
  */
 @Component
 class PaymentProcessor(private val uMoneyPaymentService: UMoneyPaymentService) {
+
     private var running: Boolean = true
     private val delayQueue: DelayQueue<PaymentEvent> = DelayQueue()
     private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
@@ -87,12 +88,12 @@ class PaymentProcessor(private val uMoneyPaymentService: UMoneyPaymentService) {
         }
     }
 
-    private fun catchPendingStatus(event: PaymentEvent): Mono<Void> {
+    private fun catchPendingStatus(event: PaymentEvent): Mono<Unit> {
         if (LocalDateTime.now().isBefore(event.expiryAt)) {
             submitTask(PaymentEvent(event.paymentId, event.delaySeconds, event.expiryAt))
             return Mono.empty()
-        } else {
-            return uMoneyPaymentService.cancelTransaction(event.paymentId)
         }
+
+        return uMoneyPaymentService.cancelTransaction(event.paymentId)
     }
 }

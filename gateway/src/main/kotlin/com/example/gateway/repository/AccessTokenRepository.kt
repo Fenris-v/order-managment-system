@@ -10,6 +10,7 @@ import java.util.UUID
  * Репозиторий для взаимодействия с таблицей access_tokens в базе данных.
  */
 interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
+
     /**
      * Проверяет существование токена по идентификатору.
      *
@@ -35,7 +36,7 @@ interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
      * @return Mono, завершающийся при успешном удалении токена.
      */
     @Query(value = "DELETE FROM access_tokens WHERE id <> :id")
-    fun deleteWhereIdNot(id: UUID): Mono<Void>
+    fun deleteWhereIdNot(id: UUID): Mono<Unit>
 
     /**
      * Удаляет все токены пользователя.
@@ -43,5 +44,5 @@ interface AccessTokenRepository : ReactiveCrudRepository<AccessToken, UUID> {
      * @param userId Идентификатор пользователя, которому необходимо удалить все токены.
      * @return Mono, завершающийся при успешном удалении токена.
      */
-    fun deleteAllByUserId(userId: Long): Mono<Void>
+    fun deleteAllByUserId(userId: Long): Mono<Unit>
 }

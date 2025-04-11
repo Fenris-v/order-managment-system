@@ -12,6 +12,7 @@ import java.util.UUID
  * Интерфейс репозитория для работы с данными о платежах.
  */
 interface TransactionRepository : ReactiveCrudRepository<Transaction, Long> {
+
     /**
      * Обновляет статус платежа по его идентификатору.
      *
@@ -19,7 +20,7 @@ interface TransactionRepository : ReactiveCrudRepository<Transaction, Long> {
      * @param paymentId идентификатор платежа.
      */
     @Query(value = "UPDATE transactions SET status = :status WHERE payment_id = :paymentId")
-    fun updateStatusByPaymentId(status: String, paymentId: UUID): Mono<Void>
+    fun updateStatusByPaymentId(status: String, paymentId: UUID): Mono<Unit>
 
     /**
      * Находит платеж по его идентификатору.

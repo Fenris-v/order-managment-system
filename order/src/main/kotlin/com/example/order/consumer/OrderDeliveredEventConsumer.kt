@@ -12,11 +12,20 @@ import reactor.core.publisher.Mono
 
 private val log: KLogger = KotlinLogging.logger {}
 
+/**
+ * Обработчик событий доставки.
+ */
 @Component
 class OrderDeliveredEventConsumer(orderRepository: OrderRepository) : AbstractStatusEventConsumer(orderRepository) {
+
+    /**
+     * Обрабатывает событие доставки заказа.
+     *
+     * @param event Событие доставки заказа.
+     */
     @Transactional
     @KafkaListener(topics = ["\${spring.kafka.topic.delivery}"], groupId = "\${spring.kafka.consumer.group-id}")
-    fun consumeEvent(event: OrderDeliveredEvent): Mono<Void> {
+    fun consumeEvent(event: OrderDeliveredEvent): Mono<Unit> {
         log.info { "Получено событие о статусе доставки: ${event.orderId}" }
         return if (event.status == Status.DELIVERED) updateOrderStatus(event.status!!, event.orderId!!)
         else Mono.empty()

@@ -22,10 +22,9 @@ repositories {
 val versionCatalog = project.rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation("org.modelmapper:modelmapper:3.2.1")
-
     versionCatalog.findBundle("spring").ifPresent { implementation(it) }
     versionCatalog.findLibrary("springValidation").ifPresent { implementation(it) }
+    versionCatalog.findLibrary("modelmapper").ifPresent { implementation(it) }
     versionCatalog.findBundle("jwt").ifPresent { implementation(it) }
 
     versionCatalog.findBundle("logs").ifPresent { implementation(it) }

@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets
  */
 @Configuration
 class ThymeleafTemplateConfig {
+
     companion object {
         private const val PREFIX = "/templates/"
         private const val SUFFIX = ".html"
@@ -21,7 +22,7 @@ class ThymeleafTemplateConfig {
      * Конфигурация шаблонизатора Thymeleaf.
      */
     @Bean
-    fun templateEngine(): SpringTemplateEngine {
+    fun customTemplateEngine(): SpringTemplateEngine {
         val springTemplateEngine = SpringTemplateEngine()
         springTemplateEngine.addTemplateResolver(emailTemplateResolver())
 

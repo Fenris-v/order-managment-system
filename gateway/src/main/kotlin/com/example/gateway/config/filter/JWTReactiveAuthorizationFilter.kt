@@ -45,6 +45,7 @@ class JWTReactiveAuthorizationFilter(
     private val accessTokenRepository: AccessTokenRepository,
     private val exceptionHandler: AuthorizationExceptionHandler
 ) : WebFilter, NonGlobalFilter {
+
     companion object {
         const val DEFAULT_EXCEPTION_MESSAGE: String = "Произошла неизвестная ошибка при попытке авторизации"
     }
@@ -76,11 +77,11 @@ class JWTReactiveAuthorizationFilter(
                     ex.message ?: DEFAULT_EXCEPTION_MESSAGE,
                     exchange,
                     HttpStatus.FORBIDDEN
-                )
-            }
+                ).thenReturn(Unit)
+            }.then()
     }
 
-    private fun handleNotValidToken(exchange: ServerWebExchange): Mono<Void> {
+    private fun handleNotValidToken(exchange: ServerWebExchange): Mono<Unit> {
         log.debug { "Обработка невалидного токена" }
         try {
             val response = exchange.response
@@ -90,14 +91,14 @@ class JWTReactiveAuthorizationFilter(
             val dto = ExceptionDto("Unauthorized", HttpStatus.UNAUTHORIZED.value())
             val dataBuffer = response.bufferFactory().wrap(objectMapper.writeValueAsBytes(dto))
 
-            return response.writeWith(Mono.just(dataBuffer))
+            return response.writeWith(Mono.just(dataBuffer)).thenReturn(Unit)
         } catch (ex: java.lang.Exception) {
             log.error(ex) { "JWT exception" }
             throw JsonParseException()
         }
     }
 
-    private fun handleValidToken(token: String, exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
+    private fun handleValidToken(token: String, exchange: ServerWebExchange, chain: WebFilterChain): Mono<Unit> {
         log.debug { "Обработка валидного токена" }
         return userDetailsService
             .findByUsername(jwtUtil.extractUsername(token))
@@ -122,6 +123,7 @@ class JWTReactiveAuthorizationFilter(
                 }
 
                 exceptionHandler.handleAuthorizationException(ex.message ?: DEFAULT_EXCEPTION_MESSAGE, exchange, status)
-            }
+                    .then()
+            }.thenReturn(Unit)
     }
 }
