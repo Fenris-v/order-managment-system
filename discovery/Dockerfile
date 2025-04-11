@@ -6,6 +6,8 @@ COPY ./gradle/libs.versions.toml /app/discovery/gradle/libs.versions.toml
 
 WORKDIR /app/discovery
 
+RUN chmod +x gradlew
+
 RUN ./gradlew clean build
 
 FROM amd64/openjdk:17-alpine AS production
