@@ -199,7 +199,9 @@ services:
       - oms
 
   jenkins-java-agent:
-    image: jenkins/inbound-agent:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-java-agent
     container_name: jenkins-java-agent
     environment:
       - JENKINS_URL=http://jenkins:8080

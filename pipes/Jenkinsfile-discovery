@@ -21,5 +21,12 @@ pipeline {
                 }
             }
         }
+
+        stage('Archive') {
+            steps {
+                archiveArtifacts artifacts: 'discovery/build/libs/*.jar'
+                onlyIfSuccessful: true
+            }
+        }
     }
 }
