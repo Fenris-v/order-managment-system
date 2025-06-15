@@ -1,0 +1,25 @@
+pipeline {
+    agent {
+        label 'java-agent'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git(
+                    branch: 'master',
+                    url: 'https://github.com/Fenris-v/order-managment-system.git',
+                    credentialsId: 'github-ssh-key'
+                )
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('discovery') {
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean build --console=plain --info'
+                }
+            }
+        }
+    }
+}

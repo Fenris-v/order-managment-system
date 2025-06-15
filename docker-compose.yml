@@ -117,7 +117,7 @@ services:
 
   kafka:
     container_name: kafka
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.6.0
     depends_on:
       - zookeeper
     ports:
@@ -186,6 +186,46 @@ services:
     networks:
       - oms
 
+  ### Пайпы ###
+  jenkins:
+    image: jenkins/jenkins:latest
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - oms
+
+  jenkins-java-agent:
+    image: jenkins/inbound-agent:latest
+    container_name: jenkins-java-agent
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=java-agent
+      - JENKINS_SECRET=eadda7db57ba0788eef32f54b30580f2621e81b5af00a5dc60f0b8404d3d299c
+    volumes:
+      - java_agent_workdir:/home/jenkins/agent
+    depends_on:
+      - jenkins
+    networks:
+      - oms
+
+  jenkins-node-agent:
+    image: jenkins/inbound-agent:latest
+    container_name: jenkins-node-agent
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=node-agent
+      - JENKINS_SECRET=78d898165aa677204b4d9990080669850ef4b3a130bd68c35fb49cd28b7be14b
+    volumes:
+      - node_agent_workdir:/home/jenkins/agent
+    depends_on:
+      - jenkins
+    networks:
+      - oms
+
 networks:
   oms:
     driver: bridge
@@ -198,4 +238,10 @@ volumes:
   payment:
     driver: local
   inventory:
+    driver: local
+  jenkins_home:
+    driver: local
+  java_agent_workdir:
+    driver: local
+  node_agent_workdir:
     driver: local
